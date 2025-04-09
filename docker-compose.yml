@@ -1,40 +1,41 @@
 services:
   frigate:
     container_name: frigate
-    privileged: false # this may not be necessary for all setups
+    privileged: false 
     restart: unless-stopped
-    stop_grace_period: 30s # allow enough time to shut down the various services
+    stop_grace_period: 30s
     image: ghcr.io/blakeblackshear/frigate:stable
-    shm_size: "512mb" # update for your cameras based on calculation above
-    devices:
-      # - /dev/bus/usb:/dev/bus/usb # Passes the USB Coral, needs to be modified for other versions
-      # - /dev/apex_0:/dev/apex_0 # Passes a PCIe Coral, follow driver instructions here https://coral.ai/docs/m2/get-started/#2a-on-linux
-      # - /dev/video11:/dev/video11 # For Raspberry Pi 4B
-      - /dev/dri/renderD128:/dev/dri/renderD128 # For intel hwaccel, needs to be updated for your hardware
+    shm_size: "512mb"
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - /frigate/config:/config
-      - /frigate/storage:/media/frigate
-      - type: tmpfs # Optional: 1GB of memory, reduces SSD/SD Card wear
+      - ./frigate/config:/config
+      - ./frigate/storage:/media/frigate
+      - type: tmpfs 
         target: /tmp/cache
         tmpfs:
           size: 1000000000
     ports:
       - "8971:8971"
-      - "5000:5000" # Internal unauthenticated access. Expose carefully.
-      - "8554:8554" # RTSP feeds
-      # - "8555:8555/tcp" # WebRTC over tcp
-      # - "8555:8555/udp" # WebRTC over udp
+      - "5000:5000" 
     environment:
       FRIGATE_RTSP_PASSWORD: "password"
+    networks:
+      - frigate-net
+
   mqtt:
-    container_name: mqtt
-    image: eclipse-mosquitto:2
+    container_name: mosquitto
+    image: eclipse-mosquitto:latest
     volumes:
       - ./mosquitto/config:/mosquitto/config
       - ./mosquitto/data:/mosquitto/data
       - ./mosquitto/log:/mosquitto/log
+    ports:
+      - "1883:1883"
+      - "9001:9001"
     restart: always
+    networks:
+      - frigate-net
+
   webapp:
     container_name: webUI
     build:
@@ -43,10 +44,28 @@ services:
     restart: unless-stopped
     ports:
       - "3000:3000"
-    environment:
-      - NODE_ENV=production
     depends_on:
       - frigate
+      - mqtt
     volumes:
       - ./web:/app
+      - ./web/src/data:/app/data
+      # - /app/.next
       - /app/node_modules
+    networks:
+      - frigate-net
+
+  rtsp:
+    container_name: rtsp-server
+    image: aler9/rtsp-simple-server
+    restart: unless-stopped
+    environment:
+      - RTSP_PROTOCOLS=tcp
+    ports:
+      - "8554:8554"
+    networks:
+      - frigate-net
+
+networks:
+  frigate-net:
+    driver: bridge

@@ -2,14 +2,15 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-COPY package.json yarn.lock ./
+RUN apk add --no-cache python3 make g++ sqlite && \
+    npm install -g pnpm
 
-RUN yarn install --frozen-lockfile
+COPY package.json pnpm-lock.yaml ./
+
+RUN pnpm install --frozen-lockfile
 
 COPY . .
 
-RUN yarn build
-
 EXPOSE 3000
 
-CMD ["yarn", "start"]
+CMD ["pnpm", "dev"]

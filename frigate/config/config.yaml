@@ -1,17 +1,71 @@
 mqtt:
-  enabled: false
+  topic_prefix: frigate
+  host: mosquitto
+
+detectors:
+  cpu1:
+    type: cpu
+    num_threads: 3
+
+model:
+  path: /cpu_model.tflite
+  labelmap:
+    0: person
+
+objects:
+  track:
+    - person
+
+record:
+  enabled: True
+  detections:
+    retain:
+      days: 7
+
+snapshots:
+  enabled: true
+  timestamp: true
+  bounding_box: true
+  retain:
+    default: 7
+
+review: # Change here for detection
+  detections:
+    required_zones:
+      - walking_zone
+    labels:
+      - person
 
 cameras:
-  name_of_your_camera: # <------ Name the camera
+  main_cam:
     enabled: true
     ffmpeg:
       inputs:
-        - path: rtsp://10.0.10.10:554/rtsp # <----- The stream you want to use for detection
+        - path: rtsp://rtsp-server:8554/mystream
           roles:
             - detect
+
     detect:
-      enabled: false # <---- disable detection until you have a working camera feed
+      enabled: true
       width: 1280
       height: 720
+      fps: 5
+
+    motion:
+      mask:
+        - 0.016,0.831,0.018,0.908,0.142,0.894,0.142,0.834
+        - 0.744,0.038,0.744,0.092,0.966,0.101,0.966,0.038
+      threshold: 40
+      contour_area: 20
+      improve_contrast: true
+    zones:
+      bunker_zone:
+        coordinates: 0.365,0.476,0.365,0.632,0.482,0.632,0.482,0.479
+        loitering_time: 0
+        objects: person
+      walking_zone:
+        coordinates: 0.55,0.786,0.549,1,0.847,1,0.845,0.852
+        loitering_time: 0
+        objects: person
 
 version: 0.15-1

@@ -1,0 +1,61 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma_client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model FrigateEventMessage {
+  id        String   @id @default(cuid())
+  eventId   String   @unique
+  camera    String
+  startTime Float
+  endTime   Float?
+  severity  String
+  thumbPath String
+  createdAt DateTime @default(now())
+
+  detections Detection[]
+  objects    ObjectLabel[]
+  subLabels  SubLabel[]
+  zones      Zone[]
+  audio      Audio[]
+}
+
+model Detection {
+  id      String              @id @default(cuid())
+  value   String
+  event   FrigateEventMessage @relation(fields: [eventId], references: [id])
+  eventId String
+}
+
+model ObjectLabel {
+  id      String              @id @default(cuid())
+  value   String
+  event   FrigateEventMessage @relation(fields: [eventId], references: [id])
+  eventId String
+}
+
+model SubLabel {
+  id      String              @id @default(cuid())
+  value   String
+  event   FrigateEventMessage @relation(fields: [eventId], references: [id])
+  eventId String
+}
+
+model Zone {
+  id      String              @id @default(cuid())
+  value   String
+  event   FrigateEventMessage @relation(fields: [eventId], references: [id])
+  eventId String
+}
+
+model Audio {
+  id      String              @id @default(cuid())
+  value   String
+  event   FrigateEventMessage @relation(fields: [eventId], references: [id])
+  eventId String
+}
