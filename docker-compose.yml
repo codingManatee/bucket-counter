@@ -55,16 +55,16 @@ services:
     networks:
       - frigate-net
 
-  rtsp:
-    container_name: rtsp-server
-    image: aler9/rtsp-simple-server
-    restart: unless-stopped
-    environment:
-      - RTSP_PROTOCOLS=tcp
-    ports:
-      - "8554:8554"
-    networks:
-      - frigate-net
+  # rtsp:
+  #   container_name: rtsp-server
+  #   image: aler9/rtsp-simple-server
+  #   restart: unless-stopped
+  #   environment:
+  #     - RTSP_PROTOCOLS=tcp
+  #   ports:
+  #     - "8554:8554"
+  #   networks:
+  #     - frigate-net
 
 networks:
   frigate-net:
