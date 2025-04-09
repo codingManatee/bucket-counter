@@ -4,7 +4,9 @@
 
 To start the application with Docker:
 
+```bash
 docker-compose up -d
+```
 
 ## Frigate Configuration
 
@@ -36,7 +38,24 @@ When configuring your camera, note that this container's network is named 'friga
 
 ## Web Application
 
-- **Setup**: Create .env file at the root of folder web and place the correct URL.
+- **Setup**:
+
+  1.  Install node modules from
+
+          ```bash
+
+      npm install
+
+# or
+
+yarn install
+
+# or
+
+pnpm install
+
+```
+  2. Create .env file from the .env.example and put correct URL for each service.
 - **Access**: The Bucket-Counter web app is available at http://localhost:3000
 - **Usage**:
   1. Click "Connect" button
@@ -53,3 +72,4 @@ When configuring your camera, note that this container's network is named 'friga
 
 ffmpeg -f avfoundation -framerate 30 -i "0" -c:v libx264 -preset veryfast -tune zerolatency -f rtsp rtsp://localhost:8554/mystream
 ffmpeg -re -stream_loop -1 -i ~/path/to/video.mp4 -c:v libx264 -preset veryfast -tune zerolatency -f rtsp rtsp://localhost:8554/mystream
+```
