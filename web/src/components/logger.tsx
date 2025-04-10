@@ -27,8 +27,8 @@ const Logger = () => {
             </Button>
           </div>
         </CardHeader>
-        <CardContent className="overflow-scroll max-h-[calc(100vh-200px)]">
-          <ScrollArea className=" rounded-md border p-4 bg-slate-100 dark:bg-slate-800 font-mono text-sm">
+        <CardContent className="">
+          <ScrollArea className="overflow-scroll max-h-[calc(100vh-200px)] rounded-md border p-4 bg-slate-100 dark:bg-slate-800 font-mono text-sm">
             {logs.length > 0 ? (
               logs.map((log, index) => (
                 <div key={index} className="pb-1">
