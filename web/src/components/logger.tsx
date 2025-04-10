@@ -1,15 +1,15 @@
-import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { RotateCcw } from "lucide-react";
 import { Button } from "./ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "./ui/card";
 import { useLogs, useMqttActions } from "@/stores/useMqttStore";
+import { ScrollArea } from "./ui/scroll-area";
 
 const Logger = () => {
   const logs = useLogs();
   const { resetLog } = useMqttActions();
   return (
-    <div className="md:col-span-3 h-full ">
-      <Card className="h-full">
+    <div className="md:col-span-3 overflow-y-auto ">
+      <Card className="">
         <CardHeader>
           <div className="flex justify-between items-center">
             <CardTitle className="text-3xl font-extrabold">
@@ -27,8 +27,8 @@ const Logger = () => {
             </Button>
           </div>
         </CardHeader>
-        <CardContent>
-          <ScrollArea className="h-[calc(100vh-200px)] rounded-md border p-4 bg-slate-100 dark:bg-slate-800 font-mono text-sm">
+        <CardContent className="overflow-scroll max-h-[calc(100vh-200px)]">
+          <ScrollArea className=" rounded-md border p-4 bg-slate-100 dark:bg-slate-800 font-mono text-sm">
             {logs.length > 0 ? (
               logs.map((log, index) => (
                 <div key={index} className="pb-1">

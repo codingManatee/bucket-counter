@@ -1,6 +1,5 @@
 "use client";
 
-import { prisma } from "@/lib/db";
 import { useState } from "react";
 
 export default function ExamplePage() {

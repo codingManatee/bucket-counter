@@ -6,7 +6,6 @@ import {
   useMqttActions,
   useObjectCounts,
 } from "@/stores/useMqttStore";
-import { FrigateEventMessage } from "@/lib/types/frigate";
 
 export const useMqttConnection = (mqttUri: string, topic: string) => {
   const clientRef = useRef<MqttClient | null>(null);

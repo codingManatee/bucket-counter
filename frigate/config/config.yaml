@@ -17,7 +17,7 @@ objects:
     - person
 
 record:
-  enabled: True
+  enabled: true
   detections:
     retain:
       days: 7
@@ -56,7 +56,7 @@ cameras:
         - 0.016,0.831,0.018,0.908,0.142,0.894,0.142,0.834
         - 0.744,0.038,0.744,0.092,0.966,0.101,0.966,0.038
       threshold: 40
-      contour_area: 20
+      contour_area: 24
       improve_contrast: true
     zones:
       bunker_zone:

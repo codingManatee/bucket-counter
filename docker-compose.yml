@@ -50,22 +50,36 @@ services:
     volumes:
       - ./web:/app
       - ./web/src/data:/app/data
-      # - /app/.next
       - /app/node_modules
     networks:
       - frigate-net
 
-  # rtsp:
-  #   container_name: rtsp-server
-  #   image: aler9/rtsp-simple-server
-  #   restart: unless-stopped
-  #   environment:
-  #     - RTSP_PROTOCOLS=tcp
-  #   ports:
-  #     - "8554:8554"
-  #   networks:
-  #     - frigate-net
+  prisma-studio:
+    container_name: database
+    build:
+      context: ./web
+    ports:
+      - "5555:5555"
+    volumes:
+      - ./web:/app
+    working_dir: /app
+    command: npx prisma studio
+    networks:
+      - frigate-net
+
+  rtsp:
+    container_name: rtsp-server
+    image: aler9/rtsp-simple-server
+    restart: unless-stopped
+    environment:
+      - RTSP_PROTOCOLS=tcp
+    ports:
+      - "8554:8554"
+    networks:
+      - frigate-net
 
 networks:
   frigate-net:
     driver: bridge
+
+

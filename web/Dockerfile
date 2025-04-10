@@ -11,6 +11,8 @@ RUN pnpm install --frozen-lockfile
 
 COPY . .
 
+RUN pnpm prisma generate
+
 EXPOSE 3000
 
 CMD ["pnpm", "dev"]
