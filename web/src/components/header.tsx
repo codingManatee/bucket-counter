@@ -23,8 +23,13 @@ const Header = () => {
       <header className=" bg-gradient-to-r from-rose-500 to-orange-500 text-white shadow-md">
         <div className="px-3 py-3 flex justify-between">
           <div className="flex items-center gap-2">
-            <h1 className="text-xl font-bold">Bucket Logger</h1>
-            <Badge variant="outline" className="text-white border-white">
+            <h1 className="hidden sm:block text-xl font-bold ">
+              Bucket Logger
+            </h1>
+            <Badge
+              variant="outline"
+              className="hidden sm:block text-white border-white "
+            >
               v1.0
             </Badge>
           </div>

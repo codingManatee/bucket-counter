@@ -18,7 +18,6 @@ export const useMqttConnection = (mqttUri: string, topic: string) => {
   useEffect(() => {
     isLoggingRef.current = isLogging;
     objectCountRef.current = objectCount;
-    console.log(objectCountRef.current);
   }, [isLogging, objectCount]);
 
   const connect = useCallback(() => {
@@ -38,7 +37,6 @@ export const useMqttConnection = (mqttUri: string, topic: string) => {
 
     client.on("message", (_topic, msg) => {
       const raw = msg.toString();
-      console.log("Received raw MQTT message:", raw);
 
       try {
         const data = JSON.parse(raw);
