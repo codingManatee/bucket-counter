@@ -14,16 +14,18 @@ import {
   CardTitle,
 } from "./ui/card";
 import { Button } from "./ui/button";
-import { ChartNoAxesColumn, Play, RotateCcw, Square } from "lucide-react";
+import { Play, RotateCcw, Square } from "lucide-react";
 import { Separator } from "./ui/separator";
 
 const Controller = () => {
   const isLogging = useIsLogging();
   const isConnected = useIsConnected();
   const objectCount = useObjectCounts();
-  const mqttUri = "ws://localhost:9001";
   const { resetCounter, setIsLogging, addLog } = useMqttActions();
-  const { connect, disconnect } = useMqttConnection(mqttUri, "frigate/reviews");
+  const { connect, disconnect } = useMqttConnection(
+    "ws://localhost:9001",
+    "frigate/reviews"
+  );
 
   return (
     <>
@@ -31,9 +33,6 @@ const Controller = () => {
         <Card className="h-full">
           <CardHeader className=" flex flex-row items-center justify-between">
             <CardTitle>Status</CardTitle>
-            <Button variant="outline" size="icon">
-              <ChartNoAxesColumn />
-            </Button>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="text-center">

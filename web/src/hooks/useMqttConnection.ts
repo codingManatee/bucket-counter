@@ -24,7 +24,9 @@ export const useMqttConnection = (mqttUri: string, topic: string) => {
     if (clientRef.current?.connected) return;
 
     const client = mqtt.connect(mqttUri, {
+      clientId: "web-client",
       reconnectPeriod: 1000,
+      clean: false,
     });
 
     clientRef.current = client;
@@ -34,6 +36,8 @@ export const useMqttConnection = (mqttUri: string, topic: string) => {
       setIsConnected(true);
       client.subscribe(topic);
     });
+
+    client.on("reconnect", () => {});
 
     client.on("message", (_topic, msg) => {
       const raw = msg.toString();

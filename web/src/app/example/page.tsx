@@ -9,7 +9,7 @@ export default function ExamplePage() {
     const samplePayload = {
       type: "end",
       before: {
-        id: "1744191637.001712-cmgx8c",
+        id: "31232131.001712-cmgx8c",
         camera: "main_cam",
         start_time: 1744191637.001712,
         end_time: null,
@@ -63,7 +63,7 @@ export default function ExamplePage() {
 
   const handleGet = async () => {
     try {
-      const res = await fetch("/api/get-log");
+      const res = await fetch("/api/get-all-log");
     } catch (err) {
       console.log(err);
     }
