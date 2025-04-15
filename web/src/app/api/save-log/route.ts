@@ -41,8 +41,14 @@ export async function POST(req: Request) {
         },
       },
     });
+    return NextResponse.json(
+      { message: "Log saved successfully." },
+      { status: 201 }
+    );
   } catch (err) {
-    console.error("Error saving event log:", err);
-    return NextResponse.json({ error: "Failed to save" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to save" + err },
+      { status: 500 }
+    );
   }
 }

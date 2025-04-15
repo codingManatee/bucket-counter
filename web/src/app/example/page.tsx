@@ -6,37 +6,59 @@ export default function ExamplePage() {
   const [response, setResponse] = useState("");
 
   const handleSend = async () => {
+    const getRandomItem = <T,>(arr: T[]) =>
+      arr[Math.floor(Math.random() * arr.length)];
+    const getRandomString = () => Math.random().toString(36).substring(2, 10);
+    const getRandomInt = (min: number, max: number) =>
+      Math.floor(Math.random() * (max - min + 1)) + min;
+
+    const now = Math.floor(Date.now() / 1000);
+    const startOffset = getRandomInt(-3600, 0); // 1h window
+    const duration = getRandomInt(5, 30);
+
+    const id = `${now + startOffset}.${
+      Math.random().toFixed(6).split(".")[1]
+    }-${getRandomString()}`;
+    const camera = getRandomItem(["main_cam", "garage", "driveway"]);
+    const severity = getRandomItem(["info", "alert", "critical"]);
+
     const samplePayload = {
       type: "end",
       before: {
-        id: "31232131.001712-cmgx8c",
-        camera: "main_cam",
-        start_time: 1744191637.001712,
+        id,
+        camera,
+        start_time: now + startOffset,
         end_time: null,
-        severity: "alert",
-        thumb_path:
-          "/media/frigate/clips/review/thumb-main_cam-1744191637.001712-cmgx8c.webp",
+        severity,
+        thumb_path: `/media/frigate/clips/thumb-${camera}-${id}.webp`,
         data: {
-          detections: ["1744191636.361095-dvbbbr"],
-          objects: ["person"],
+          detections: ["det_" + getRandomString()],
+          objects: ["person", "car", "dog"]
+            .sort(() => 0.5 - Math.random())
+            .slice(0, 1),
           sub_labels: [],
-          zones: ["walking_zone"],
+          zones: ["walking_zone", "entry", "garage_zone"]
+            .sort(() => 0.5 - Math.random())
+            .slice(0, 1),
           audio: [],
         },
       },
       after: {
-        id: "1744191637.001712-cmgx8c",
-        camera: "main_cam",
-        start_time: 1744191637.001712,
-        end_time: 1744191640.568769,
-        severity: "alert",
-        thumb_path:
-          "/media/frigate/clips/review/thumb-main_cam-1744191637.001712-cmgx8c.webp",
+        id,
+        camera,
+        start_time: now + startOffset,
+        end_time: now + startOffset + duration,
+        severity,
+        thumb_path: `/media/frigate/clips/thumb-${camera}-${id}.webp`,
         data: {
-          detections: ["1744191636.361095-dvbbbr"],
-          objects: ["person"],
+          detections: ["det_" + getRandomString()],
+          objects: ["person", "car", "dog"]
+            .sort(() => 0.5 - Math.random())
+            .slice(0, 1),
           sub_labels: [],
-          zones: ["walking_zone"],
+          zones: ["walking_zone", "entry", "garage_zone"]
+            .sort(() => 0.5 - Math.random())
+            .slice(0, 1),
           audio: [],
         },
       },
@@ -54,7 +76,7 @@ export default function ExamplePage() {
       const result = await res.json();
       if (!res.ok) throw new Error(result.error || "Unknown error");
 
-      setResponse("Success! Log saved.");
+      setResponse("Success! Random log saved.");
     } catch (err: any) {
       console.error(err);
       setResponse("Error: " + err.message);

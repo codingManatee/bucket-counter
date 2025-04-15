@@ -22,19 +22,46 @@ export async function GET(
     const now = new Date();
 
     if (shift === "day") {
-      const start = new Date(now);
-      start.setHours(7, 0, 0, 0);
-      const end = new Date(now);
-      end.setHours(19, 0, 0, 0);
+      const hour = now.getHours();
+      let start, end;
+      if (hour < 7) {
+        start = new Date(now);
+        start.setDate(start.getDate() - 1);
+        start.setHours(7, 0, 0, 0);
 
-      startTime = Math.floor(start.getTime() / 1000);
-      endTime = Math.floor(end.getTime() / 1000);
+        end = new Date(now);
+        end.setHours(end.getDate() - 1);
+        end.setHours(19, 0, 0, 0);
+
+        startTime = Math.floor(start.getTime() / 1000);
+        endTime = Math.floor(end.getTime() / 1000);
+      } else {
+        const start = new Date(now);
+        start.setHours(7, 0, 0, 0);
+        const end = new Date(now);
+        end.setHours(19, 0, 0, 0);
+
+        startTime = Math.floor(start.getTime() / 1000);
+        endTime = Math.floor(end.getTime() / 1000);
+      }
     } else if (shift === "night") {
-      const start = new Date(now);
-      start.setHours(19, 0, 0, 0);
-      const end = new Date(start);
-      end.setDate(end.getDate() + 1); // next day
-      end.setHours(7, 0, 0, 0);
+      const hour = now.getHours();
+      let start, end;
+      if (hour < 7) {
+        start = new Date(now);
+        start.setDate(start.getDate() - 1);
+        start.setHours(19, 0, 0, 0);
+
+        end = new Date(now);
+        end.setHours(7, 0, 0, 0);
+      } else {
+        start = new Date(now);
+        start.setHours(19, 0, 0, 0);
+
+        end = new Date(start);
+        end.setDate(end.getDate() + 1);
+        end.setHours(7, 0, 0, 0);
+      }
 
       startTime = Math.floor(start.getTime() / 1000);
       endTime = Math.floor(end.getTime() / 1000);
@@ -43,9 +70,9 @@ export async function GET(
       start.setHours(0, 0, 0, 0);
       const end = new Date(now);
       end.setHours(23, 59, 59, 999);
-
       startTime = Math.floor(start.getTime() / 1000);
       endTime = Math.floor(end.getTime() / 1000);
+      console.log("day shift", startTime, endTime);
     } else if (startParam && endParam) {
       startTime = parseInt(startParam);
       endTime = parseInt(endParam);
