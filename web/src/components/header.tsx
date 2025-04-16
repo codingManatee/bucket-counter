@@ -4,6 +4,7 @@ import { Clock, Thermometer, Wifi, WifiOff } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Badge } from "./ui/badge";
 import { useIsConnected } from "@/stores/useMqttStore";
+import SettingsButton from "./settingButton";
 
 const Header = () => {
   const isConnected = useIsConnected();
@@ -47,6 +48,9 @@ const Header = () => {
               <span className="ml-1.5">
                 {isConnected ? "Connected" : "Disconnected"}
               </span>
+            </div>
+            <div className="">
+              <SettingsButton />
             </div>
           </div>
         </div>
