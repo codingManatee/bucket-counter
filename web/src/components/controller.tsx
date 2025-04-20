@@ -64,10 +64,13 @@ const Controller = () => {
                 }`}
                 onClick={() => {
                   if (isConnected) {
+                    console.log("try disconnect");
                     disconnect();
                   } else {
+                    console.log("try connect");
                     connect();
                   }
+                  console.log(!isConnected);
                 }}
               >
                 {isConnected ? "Connected" : "Disconnected"}

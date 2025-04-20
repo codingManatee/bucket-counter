@@ -25,10 +25,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased h-screen`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col h-screen`}
       >
         <Header />
-        {children}
+        <main className="flex-1 bg-gray-100 overflow-hidden">{children}</main>
       </body>
     </html>
   );

@@ -7,20 +7,21 @@ type GroupedEvents = Record<string, FrigateEventMessage[]>;
 export const getAllEvents = () =>
   apiFetch<FrigateEventMessage[]>("/api/events");
 
-export const getDayShiftEvents = (timezone: number) => {
-  apiFetch<FrigateEventMessage[]>(`/api/events/day-shift?timezone=${timezone}`);
-};
+export const getTodayShiftEvents = (timezone: number) =>
+  apiFetch<FrigateEventMessage[]>(`/api/events/today?timezone=${timezone}`);
 
-export const getNightShiftEvents = (timezone: number) => {
+export const getDayShiftEvents = (timezone: number) =>
+  apiFetch<FrigateEventMessage[]>(`/api/events/day-shift?timezone=${timezone}`);
+
+export const getNightShiftEvents = (timezone: number) =>
   apiFetch<FrigateEventMessage[]>(
     `/api/events/night-shift?timezone=${timezone}`
   );
-};
 
 export const getDayShiftEventsGrouped = (timezone: number) =>
   apiFetch<GroupedEvents>(`/api/events/day-shift-grouped?timezone=${timezone}`);
 
-export const getNightShiftEventsGrouped = (timezone: number, grouped = true) =>
+export const getNightShiftEventsGrouped = (timezone: number) =>
   apiFetch<GroupedEvents>(
     `/api/events/night-shift-grouped?timezone=${timezone}`
   );

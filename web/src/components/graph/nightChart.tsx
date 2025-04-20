@@ -19,8 +19,9 @@ import {
   CardTitle,
 } from "../ui/card";
 import { useState, useEffect } from "react";
-import { FrigateEventMessage } from "@prisma/client";
 import { useTimeZone } from "@/stores/useMqttStore";
+import { getNightShiftEventsGrouped } from "@/services/events/eventsApi";
+import { transformGroupedEventsToChartData } from "@/utils/helper";
 
 type chart_data = {
   time: string;
@@ -48,73 +49,14 @@ const NightChart = () => {
   const timezone = useTimeZone();
 
   useEffect(() => {
-    const fetchDayShiftData = async () => {
-      try {
-        const res = await fetch(
-          `/api/get-log?shift=night&timezone=${encodeURIComponent(timezone)}`
-        );
-        if (!res.ok) throw new Error("Failed to fetch");
-        const events = await res.json();
-
-        const buckets: Record<string, number> = {};
-
-        const startHour = 19;
-        const endHour = 7;
-
-        for (let i = 0; i < 24; i++) {
-          const hour = (startHour + i) % 24;
-          buckets[`${hour.toString().padStart(2, "0")}:00`] = 0;
-          buckets[`${hour.toString().padStart(2, "0")}:30`] = 0;
-          if (hour === (endHour - 1 + 24) % 24) break;
-        }
-
-        const timezoneOffset = timezone * 60;
-
-        setTotalCount(events.length);
-
-        events.forEach((event: FrigateEventMessage) => {
-          const time = new Date(
-            event.startTime * 1000 + timezoneOffset * 60 * 1000
-          );
-          const dateString = time
-            .toISOString()
-            .replace(/T/, " ")
-            .replace(/\..+/, "");
-
-          const timePart = dateString.split(" ")[1];
-          const [hourStr, minuteStr] = timePart.split(":");
-
-          const hour = parseInt(hourStr, 10);
-          const minutes = parseInt(minuteStr, 10);
-
-          if (hour >= endHour || hour <= startHour) {
-            const rounded = minutes < 30 ? "00" : "30";
-            const key = `${hour.toString().padStart(2, "0")}:${rounded}`;
-            if (key in buckets) {
-              buckets[key]++;
-            }
-          }
-        });
-
-        let cumulative = 0;
-        const chartData: chart_data = Object.entries(buckets)
-          .sort(([a], [b]) => (a > b ? 1 : -1))
-          .map(([time, count]) => {
-            cumulative += count;
-            return {
-              time,
-              bucketsPerPeriod: count,
-              cumulativeTotal: cumulative,
-            };
-          });
-
-        setChartData(chartData);
-      } catch (err) {
-        console.error("Error fetching day shift data:", err);
-      }
+    const fetchAndTransform = async () => {
+      const eventGrouped = await getNightShiftEventsGrouped(timezone);
+      const data = transformGroupedEventsToChartData(eventGrouped, true);
+      setChartData(data);
+      setTotalCount(data.at(-1)?.cumulativeTotal ?? 0);
     };
 
-    fetchDayShiftData();
+    fetchAndTransform();
   }, [timezone]);
 
   return (

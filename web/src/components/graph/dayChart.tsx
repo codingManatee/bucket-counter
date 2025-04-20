@@ -22,6 +22,7 @@ import { useEffect, useState } from "react";
 import { getDayShiftEventsGrouped } from "@/services/events/eventsApi";
 import { useTimeZone } from "@/stores/useMqttStore";
 import { transformGroupedEventsToChartData } from "@/utils/helper";
+import { Skeleton } from "../ui/skeleton";
 
 type chart_data = {
   time: string;
@@ -43,7 +44,11 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   return null;
 };
 
-const DayChart = () => {
+interface DayChartProps {
+  isLoading?: boolean;
+}
+
+const DayChart = ({ isLoading = false }: DayChartProps) => {
   const timezone = useTimeZone();
   const [chartData, setChartData] = useState<chart_data>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
@@ -60,7 +65,7 @@ const DayChart = () => {
   }, [timezone]);
 
   return (
-    <Card className="col-span-3 w-full">
+    <Card className="h-full">
       <CardHeader>
         <CardTitle className="text-center text-xl">
           Day Shift Unloading Chart (07:00-19:00)
@@ -69,60 +74,64 @@ const DayChart = () => {
           Total: {totalCount} buckets
         </CardDescription>
       </CardHeader>
-      <CardContent>
-        <div className="h-[500px] w-full">
-          <ResponsiveContainer width="100%" height="100%">
-            <ComposedChart
-              data={chartData}
-              margin={{
-                top: 0,
-                right: 0,
-                left: 0,
-                bottom: 0,
-              }}
-            >
-              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-              <XAxis
-                dataKey="time"
-                label={{
-                  value: "Time (HH:MM)",
-                  position: "insideBottom",
+      <CardContent className="h-full">
+        <div className="h-full w-full">
+          {isLoading ? (
+            <Skeleton className="w-full h-full" />
+          ) : (
+            <ResponsiveContainer width="100%" height="100%">
+              <ComposedChart
+                data={chartData}
+                margin={{
+                  top: 0,
+                  right: 0,
+                  left: 0,
+                  bottom: 0,
                 }}
-                tick={{ fontSize: 12 }}
-                height={60}
-              />
-              <YAxis
-                label={{
-                  value: "Number of Buckets",
-                  angle: -90,
-                  position: "insideLeft",
-                }}
-                tick={{ fontSize: 12 }}
-                width={80}
-              />
-              <Tooltip content={<CustomTooltip />} />
-              <Legend
-                verticalAlign="top"
-                height={36}
-                wrapperStyle={{ paddingTop: "10px" }}
-              />
-              <Bar
-                dataKey="bucketsPerPeriod"
-                name="Buckets per 30 min"
-                fill="#16a34a"
-                barSize={20}
-              />
-              <Line
-                type="monotone"
-                dataKey="cumulativeTotal"
-                name="Cumulative total"
-                stroke="#2563eb"
-                strokeWidth={2}
-                dot={{ r: 4, strokeWidth: 2 }}
-                activeDot={{ r: 6, strokeWidth: 2 }}
-              />
-            </ComposedChart>
-          </ResponsiveContainer>
+              >
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                <XAxis
+                  dataKey="time"
+                  label={{
+                    value: "Time (HH:MM)",
+                    position: "insideBottom",
+                  }}
+                  tick={{ fontSize: 12 }}
+                  height={60}
+                />
+                <YAxis
+                  label={{
+                    value: "Number of Buckets",
+                    angle: -90,
+                    position: "insideLeft",
+                  }}
+                  tick={{ fontSize: 12 }}
+                  width={80}
+                />
+                <Tooltip content={<CustomTooltip />} />
+                <Legend
+                  verticalAlign="top"
+                  height={36}
+                  wrapperStyle={{ paddingTop: "10px" }}
+                />
+                <Bar
+                  dataKey="bucketsPerPeriod"
+                  name="Buckets per 30 min"
+                  fill="#16a34a"
+                  barSize={20}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="cumulativeTotal"
+                  name="Cumulative total"
+                  stroke="#2563eb"
+                  strokeWidth={2}
+                  dot={{ r: 4, strokeWidth: 2 }}
+                  activeDot={{ r: 6, strokeWidth: 2 }}
+                />
+              </ComposedChart>
+            </ResponsiveContainer>
+          )}
         </div>
       </CardContent>
     </Card>
