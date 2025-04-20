@@ -5,11 +5,13 @@ export interface EventService {
   getAllEvents: () => Promise<FrigateEventMessage[]>;
   getEventsDayShift: (
     timezone: number,
-    grouped: boolean
+    grouped: boolean,
+    date?: Date | string
   ) => Promise<FrigateEventMessage[] | Record<string, FrigateEventMessage[]>>;
   getEventsNightShift: (
     timezone: number,
-    grouped: boolean
+    grouped: boolean,
+    date?: Date | string
   ) => Promise<FrigateEventMessage[] | Record<string, FrigateEventMessage[]>>;
   createEvents: (
     event: FrigateEvent

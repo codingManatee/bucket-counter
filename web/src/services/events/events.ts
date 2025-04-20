@@ -6,9 +6,14 @@ export const eventService: EventService = {
   async getAllEvents() {
     return prisma.frigateEventMessage.findMany();
   },
-  async getEventsDayShift(timezone: number, grouped = false) {
+  async getEventsDayShift(
+    timezone: number,
+    grouped = false,
+    date?: string | Date
+  ) {
     const events = await prisma.frigateEventMessage.findMany();
-    const now = new Date();
+    const now = date ? new Date(date) : new Date();
+
     const utcNow = new Date(now.getTime() + timezone * 60 * 60 * 1000);
 
     let startLocal: Date, endLocal: Date;
@@ -58,9 +63,14 @@ export const eventService: EventService = {
 
     return groupedByHalfHour;
   },
-  async getEventsNightShift(timezone: number, grouped = false) {
+  async getEventsNightShift(
+    timezone: number,
+    grouped = false,
+    date?: string | Date
+  ) {
     const events = await prisma.frigateEventMessage.findMany();
-    const now = new Date();
+    const now = date ? new Date(date) : new Date();
+
     const utcNow = new Date(now.getTime() + timezone * 60 * 60 * 1000);
 
     let startLocal: Date, endLocal: Date;
