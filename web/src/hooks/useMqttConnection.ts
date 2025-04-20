@@ -6,6 +6,8 @@ import {
   useMqttActions,
   useObjectCounts,
 } from "@/stores/useMqttStore";
+import { FrigateEvent } from "@/types/FrigateEvent";
+import { createEvent } from "@/services/events/eventsApi";
 
 export const useMqttConnection = (mqttUri: string, topic: string) => {
   const clientRef = useRef<MqttClient | null>(null);
@@ -43,31 +45,26 @@ export const useMqttConnection = (mqttUri: string, topic: string) => {
       const raw = msg.toString();
 
       try {
-        const data = JSON.parse(raw);
-        console.log(data);
+        const eventData: FrigateEvent = JSON.parse(raw);
         if (isLoggingRef.current) {
-          if (data.type === "new") {
+          if (eventData.type === "new") {
             incrementObjectCount();
             addLog("Bucket unloading initiated");
-          } else if (data.type === "end") {
+          } else if (eventData.type === "end") {
             addLog("Bucket unloading finished");
             if (
-              typeof data?.after?.end_time === "number" &&
-              typeof data?.after?.start_time === "number"
+              typeof eventData?.after?.end_time === "number" &&
+              typeof eventData?.after?.start_time === "number"
             ) {
               const duration = (
-                data.after.end_time - data.after.start_time
+                eventData.after.end_time - eventData.after.start_time
               ).toFixed(2);
               addLog(
                 `Current count: ${objectCountRef.current}, Total time unloading: ${duration}s`
               );
             }
-            console.log(JSON.stringify(data));
-            fetch("/api/save-log", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(data),
-            });
+
+            createEvent(eventData);
           }
         }
       } catch (e) {
@@ -78,15 +75,7 @@ export const useMqttConnection = (mqttUri: string, topic: string) => {
     client.on("error", (err) => {
       console.error("MQTT Error:", err);
     });
-  }, [
-    mqttUri,
-    topic,
-    isLogging,
-    objectCount,
-    addLog,
-    incrementObjectCount,
-    setIsConnected,
-  ]);
+  }, []);
 
   const disconnect = useCallback(() => {
     const client = clientRef.current;

@@ -9,53 +9,51 @@ datasource db {
 }
 
 model FrigateEventMessage {
-  id        String   @id @default(cuid())
-  eventId   String   @unique
+  id        String @id @default(cuid())
+  eventId   String @unique
   camera    String
-  startTime Float
-  endTime   Float?
+  startTime String
+  endTime   String
   severity  String
-  thumbPath String
-  createdAt DateTime @default(now())
 
-  detections Detection[]
-  objects    ObjectLabel[]
-  subLabels  SubLabel[]
-  zones      Zone[]
-  audio      Audio[]
+  detections  Detection[]
+  zones       Zone[]
+  SubLabel    SubLabel[]
+  Audio       Audio[]
+  ObjectLabel ObjectLabel[]
 }
 
 model Detection {
   id      String              @id @default(cuid())
   value   String
-  event   FrigateEventMessage @relation(fields: [eventId], references: [id])
+  event   FrigateEventMessage @relation(fields: [eventId], references: [id], onDelete: Cascade)
   eventId String
 }
 
 model ObjectLabel {
   id      String              @id @default(cuid())
   value   String
-  event   FrigateEventMessage @relation(fields: [eventId], references: [id])
+  event   FrigateEventMessage @relation(fields: [eventId], references: [id], onDelete: Cascade)
   eventId String
 }
 
 model SubLabel {
   id      String              @id @default(cuid())
   value   String
-  event   FrigateEventMessage @relation(fields: [eventId], references: [id])
+  event   FrigateEventMessage @relation(fields: [eventId], references: [id], onDelete: Cascade)
   eventId String
 }
 
 model Zone {
   id      String              @id @default(cuid())
   value   String
-  event   FrigateEventMessage @relation(fields: [eventId], references: [id])
+  event   FrigateEventMessage @relation(fields: [eventId], references: [id], onDelete: Cascade)
   eventId String
 }
 
 model Audio {
   id      String              @id @default(cuid())
   value   String
-  event   FrigateEventMessage @relation(fields: [eventId], references: [id])
+  event   FrigateEventMessage @relation(fields: [eventId], references: [id], onDelete: Cascade)
   eventId String
 }

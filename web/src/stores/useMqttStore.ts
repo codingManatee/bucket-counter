@@ -1,11 +1,20 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
+export enum shiftDisplay {
+  day = "day",
+  night = "night",
+  today = "today",
+}
+
 interface MqttStore {
   objectCount: number;
   isConnected: boolean;
   isLogging: boolean;
   logs: string[];
+  timezone: number;
+  selectedDay: Date;
+  selectedShiftDisplay: shiftDisplay;
   actions: {
     incrementObjectCount: () => void;
     setIsConnected: (connected: boolean) => void;
@@ -13,6 +22,9 @@ interface MqttStore {
     addLog: (entry: string) => void;
     resetLog: () => void;
     resetCounter: () => void;
+    setTimeZone: (timezone: number) => void;
+    setSelectedDay: (date: Date) => void;
+    setSelectedShiftDisplay: (shift: shiftDisplay) => void;
   };
 }
 
@@ -23,6 +35,9 @@ const useMqttStore = create<MqttStore>()(
       isConnected: false,
       isLogging: false,
       logs: [],
+      timezone: 0,
+      selectedDay: new Date(),
+      selectedShiftDisplay: shiftDisplay.day,
       actions: {
         incrementObjectCount: () =>
           set((state) => ({ objectCount: state.objectCount + 1 })),
@@ -43,6 +58,10 @@ const useMqttStore = create<MqttStore>()(
             objectCount: 0,
           });
         },
+        setTimeZone: (timezone) => set({ timezone: timezone }),
+        setSelectedDay: (date) => set({ selectedDay: date }),
+        setSelectedShiftDisplay: (shift) =>
+          set({ selectedShiftDisplay: shift }),
       },
     }),
     {
@@ -64,3 +83,7 @@ export const useIsConnected = () => useMqttStore((state) => state.isConnected);
 export const useIsLogging = () => useMqttStore((state) => state.isLogging);
 export const useLogs = () => useMqttStore((state) => state.logs);
 export const useObjectCounts = () => useMqttStore((state) => state.objectCount);
+export const useTimeZone = () => useMqttStore((state) => state.timezone);
+export const useSelectedDay = () => useMqttStore((state) => state.selectedDay);
+export const useSelectedShiftDisplay = () =>
+  useMqttStore((state) => state.selectedShiftDisplay);

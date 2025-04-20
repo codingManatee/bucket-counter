@@ -1,14 +1,18 @@
 "use client";
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "./ui/card";
+import { useTimeZone } from "@/stores/useMqttStore";
 
 const DailyCounter = () => {
   const [count, setCount] = useState<number>(0);
-
+  const timezone = useTimeZone();
   useEffect(() => {
     const fetchTodayShiftCount = async () => {
+      if (!timezone) return;
       try {
-        const res = await fetch("/api/get-log?today=true");
+        const res = await fetch(
+          `/api/get-log?today=true&timezone=${encodeURIComponent(timezone)}`
+        );
         if (!res.ok) throw new Error("Failed to fetch");
         const data = await res.json();
         setCount(data.length);
@@ -19,7 +23,8 @@ const DailyCounter = () => {
     };
 
     fetchTodayShiftCount();
-  }, []);
+  }, [timezone]);
+
   return (
     <Card className="flex col-span-1 text-center align">
       <CardContent className="h-full flex flex-col place-content-center">

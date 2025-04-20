@@ -1,6 +1,6 @@
 "use client";
-import { Clock, Thermometer, Wifi, WifiOff } from "lucide-react";
 
+import { Clock, Thermometer, Wifi, WifiOff } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Badge } from "./ui/badge";
 import { useIsConnected } from "@/stores/useMqttStore";

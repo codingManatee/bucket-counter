@@ -11,20 +11,12 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { useMqttActions, useTimeZone } from "@/stores/useMqttStore";
 
 export default function SettingsButton() {
-  const [autoConnect, setAutoConnect] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
-  const [logRetention, setLogRetention] = useState(7);
-  const [timezone, setTimezone] = useState("UTC");
-
-  useEffect(() => {
-    localStorage.setItem("timezone", timezone);
-    localStorage.setItem("darkMode", darkMode ? "true" : "false");
-    localStorage.setItem("autoConnect", autoConnect ? "true" : "false");
-  }, [timezone, darkMode, autoConnect]);
+  const { setTimeZone } = useMqttActions();
+  const timezone = useTimeZone();
 
   return (
     <Sheet>
@@ -32,7 +24,7 @@ export default function SettingsButton() {
         <Button
           variant="ghost"
           size="icon"
-          className="text-white hover:bg-white/10 rounded-full"
+          className="text-white hover:bg-white/10 hover:text-white rounded-full"
           aria-label="Settings"
         >
           <Settings className="h-5 w-5" />
@@ -46,66 +38,42 @@ export default function SettingsButton() {
           </SheetDescription>
         </SheetHeader>
         <div className="py-6 space-y-6">
-          <div className="flex items-center justify-between">
-            <div className="space-y-0.5">
-              <Label htmlFor="auto-connect">Auto Connect</Label>
-              <p className="text-sm text-muted-foreground">
-                Automatically connect on startup
-              </p>
-            </div>
-            <Switch
-              id="auto-connect"
-              checked={autoConnect}
-              onCheckedChange={setAutoConnect}
-            />
-          </div>
-
-          <div className="flex items-center justify-between">
-            <div className="space-y-0.5">
-              <Label htmlFor="dark-mode">Dark Mode</Label>
-              <p className="text-sm text-muted-foreground">
-                Switch between light and dark theme
-              </p>
-            </div>
-            <Switch
-              id="dark-mode"
-              checked={darkMode}
-              onCheckedChange={setDarkMode}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="log-retention">Log Retention (days)</Label>
-            <select
-              id="log-retention"
-              value={logRetention}
-              onChange={(e) => setLogRetention(Number(e.target.value))}
-              className="w-full rounded-md border border-input bg-background px-3 py-2"
-            >
-              <option value={1}>1 day</option>
-              <option value={7}>7 days</option>
-              <option value={30}>30 days</option>
-              <option value={90}>90 days</option>
-            </select>
-          </div>
           <div className="space-y-2">
             <Label htmlFor="timezone">Timezone</Label>
             <select
               id="timezone"
-              value={timezone}
-              onChange={(e) => setTimezone(e.target.value)}
+              value={timezone ?? ""}
+              onChange={(e) => setTimeZone(Number(e.target.value))}
               className="w-full rounded-md border border-input bg-background px-3 py-2"
             >
-              <option value="UTC">UTC</option>
-              <option value="America/New_York">Eastern Time (ET)</option>
-              <option value="America/Chicago">Central Time (CT)</option>
-              <option value="America/Denver">Mountain Time (MT)</option>
-              <option value="America/Los_Angeles">Pacific Time (PT)</option>
-              <option value="Europe/London">London (GMT)</option>
-              <option value="Europe/Paris">Paris (CET)</option>
-              <option value="Asia/Tokyo">Tokyo (JST)</option>
-              <option value="Australia/Sydney">Sydney (AEST)</option>
+              <option value={-12}>GMT-12:00</option>
+              <option value={-11}>GMT-11:00</option>
+              <option value={-10}>GMT-10:00</option>
+              <option value={-9}>GMT-09:00</option>
+              <option value={-8}>GMT-08:00</option>
+              <option value={-7}>GMT-07:00</option>
+              <option value={-6}>GMT-06:00</option>
+              <option value={-5}>GMT-05:00</option>
+              <option value={-4}>GMT-04:00</option>
+              <option value={-3}>GMT-03:00</option>
+              <option value={-2}>GMT-02:00</option>
+              <option value={-1}>GMT-01:00</option>
+              <option value={0}>GMT+00:00 (UTC)</option>
+              <option value={1}>GMT+01:00</option>
+              <option value={2}>GMT+02:00</option>
+              <option value={3}>GMT+03:00</option>
+              <option value={4}>GMT+04:00</option>
+              <option value={5}>GMT+05:00</option>
+              <option value={5.5}>GMT+05:30</option>
+              <option value={6}>GMT+06:00</option>
+              <option value={7}>GMT+07:00</option>
+              <option value={8}>GMT+08:00</option>
+              <option value={9}>GMT+09:00</option>
+              <option value={10}>GMT+10:00</option>
+              <option value={11}>GMT+11:00</option>
+              <option value={12}>GMT+12:00</option>
             </select>
+
             <p className="text-xs text-muted-foreground mt-1">
               Timestamps will be displayed in the selected timezone
             </p>
@@ -114,4 +82,54 @@ export default function SettingsButton() {
       </SheetContent>
     </Sheet>
   );
+}
+
+// TODO:
+{
+  /* <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
+              <Label htmlFor="auto-connect">Auto Connect</Label>
+              <p className="text-sm text-muted-foreground">
+                Automatically connect on startup
+              </p>
+            </div>
+            <Switch
+              id="auto-connect"
+              checked={autoConnect ?? false}
+              onCheckedChange={setAutoConnect}
+            />
+          </div> */
+}
+
+{
+  /* <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
+              <Label htmlFor="dark-mode">Dark Mode</Label>
+              <p className="text-sm text-muted-foreground">
+                Switch between light and dark theme
+              </p>
+            </div>
+            <Switch
+              id="dark-mode"
+              checked={darkMode === "dark"}
+              onCheckedChange={(checked) => {
+                checked ? setDarkMode("dark") : setDarkMode("light");
+              }}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="log-retention">Log Retention (days)</Label>
+            <select
+              id="log-retention"
+              value={logRetention ?? ""}
+              // onChange={(e) => setLogRetention(Number(e.target.value))}
+              className="w-full rounded-md border border-input bg-background px-3 py-2"
+            >
+              <option value={1}>1 day</option>
+              <option value={7}>7 days</option>
+              <option value={30}>30 days</option>
+              <option value={90}>90 days</option>
+            </select>
+          </div> */
 }

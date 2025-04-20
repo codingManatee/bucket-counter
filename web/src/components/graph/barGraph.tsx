@@ -14,7 +14,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "./ui/card";
+} from "../ui/card";
 import { useEffect, useState } from "react";
 
 const chartConfig = {
@@ -50,6 +50,7 @@ const BarGraph = () => {
     const fetchWeeklyData = async () => {
       const [start, end] = getCurrentWeekRange();
       try {
+        const timezone = localStorage.getItem("timezone") || "GMT+0";
         const res = await fetch(`/api/get-log?start=${start}&end=${end}`);
         if (!res.ok) {
           return;
@@ -64,17 +65,40 @@ const BarGraph = () => {
           Friday: 0,
           Saturday: 0,
         };
+        const timezoneMatch = timezone.match(/GMT([+-])(\d+)/);
+        let offsetHours = 0;
+        if (timezoneMatch) {
+          const sign = timezoneMatch[1] === "+" ? 1 : -1;
+          offsetHours = parseInt(timezoneMatch[2]) * sign;
+        }
+
         for (const event of data) {
-          const date = new Date(event.startTime * 1000);
-          const dayName = date.toLocaleDateString("en-US", {
+          // Convert timestamp to Date in user's timezone
+          const eventTime = new Date(event.startTime * 1000);
+
+          // Get the hour in user's local time
+          const hour = eventTime.getHours();
+
+          // Determine which day to count this event for
+          let dayToCount = new Date(eventTime);
+
+          // If it's between midnight and 7 AM, count it for the previous day
+          if (hour < 7) {
+            dayToCount.setDate(dayToCount.getDate() - 1);
+          }
+
+          const dayName = dayToCount.toLocaleDateString("en-US", {
             weekday: "long",
           });
+
           countByDay[dayName]++;
         }
+
         const formatted = Object.entries(countByDay).map(([day, count]) => ({
           dayOfTheWeek: day,
           count,
         }));
+
         setChartData(formatted);
       } catch (err) {
         console.error("Failed to fetch weekly event data:", err);
