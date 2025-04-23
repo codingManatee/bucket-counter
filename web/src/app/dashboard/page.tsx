@@ -66,33 +66,26 @@ const Page = () => {
         <div className="overflow-auto md:flex-1 md:min-h-0">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5 h-full overflow-auto">
             <div className="flex flex-col h-[600px] md:max-h-full md:h-auto overflow-auto space-y-2">
-              <div className="h-1/4">
-                <div className="grid grid-cols-3 gap-4 h-full">
-                  <CounterBox
-                    label="TODAY"
-                    count={dayCount + nightCount}
-                    isLoading={isLoading}
-                  />
-                  <CounterBox
-                    label="DAY SHIFT"
-                    description="7AM - 19PM"
-                    count={dayCount}
-                    numberColor="text-amber-500"
-                    isLoading={isLoading}
-                  />
-                  <CounterBox
-                    label="NIGHT SHIFT"
-                    description="19PM - 7AM"
-                    count={nightCount}
-                    numberColor="text-indigo-600"
-                    isLoading={isLoading}
-                  />
-                </div>
-              </div>
-              <div className="h-3/4">
-                <div className="h-full overflow-auto">
-                  <IdleTable />
-                </div>
+              <div className="grid grid-cols-3 gap-4 h-full">
+                <CounterBox
+                  label="TODAY"
+                  count={dayCount + nightCount}
+                  isLoading={isLoading}
+                />
+                <CounterBox
+                  label="DAY SHIFT"
+                  description="7AM - 19PM"
+                  count={dayCount}
+                  numberColor="text-amber-500"
+                  isLoading={isLoading}
+                />
+                <CounterBox
+                  label="NIGHT SHIFT"
+                  description="19PM - 7AM"
+                  count={nightCount}
+                  numberColor="text-indigo-600"
+                  isLoading={isLoading}
+                />
               </div>
             </div>
             <div className="flex flex-col h-[500px] md:h-full md:overflow-auto">

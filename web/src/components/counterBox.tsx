@@ -26,7 +26,7 @@ const CounterBox = ({
         </CardDescription>
 
         {isLoading ? (
-          <Skeleton className="w-24 h-14 mx-auto rounded-md" />
+          <Skeleton className="w-full h-14 -mx-auto rounded-md" />
         ) : (
           <div
             className={clsx(

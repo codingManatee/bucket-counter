@@ -65,9 +65,9 @@ const DayChart = ({ isLoading = false }: DayChartProps) => {
   }, [timezone]);
 
   return (
-    <Card className="h-full">
+    <Card className="h-full py-1">
       <CardHeader>
-        <CardTitle className="text-center text-xl">
+        <CardTitle className="text-center text-md md:text-xl">
           Day Shift Unloading Chart (07:00-19:00)
         </CardTitle>
         <CardDescription className="text-center text-base">
@@ -97,7 +97,7 @@ const DayChart = ({ isLoading = false }: DayChartProps) => {
                     position: "insideBottom",
                   }}
                   tick={{ fontSize: 12 }}
-                  height={60}
+                  height={50}
                 />
                 <YAxis
                   label={{
@@ -106,14 +106,14 @@ const DayChart = ({ isLoading = false }: DayChartProps) => {
                     position: "insideLeft",
                   }}
                   tick={{ fontSize: 12 }}
-                  width={80}
+                  width={50}
                 />
                 <Tooltip content={<CustomTooltip />} />
-                <Legend
+                {/* <Legend
                   verticalAlign="top"
                   height={36}
                   wrapperStyle={{ paddingTop: "10px" }}
-                />
+                /> */}
                 <Bar
                   dataKey="bucketsPerPeriod"
                   name="Buckets per 30 min"
