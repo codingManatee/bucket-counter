@@ -12,7 +12,7 @@ import {
   getTodayShiftEvents,
 } from "@/services/events/eventsApi";
 import { useTimeZone } from "@/stores/useMqttStore";
-import { formatSeconds, generateRandomPayload } from "@/utils/helper";
+import { generateRandomPayload } from "@/utils/helper";
 
 export default function ExamplePage() {
   const timezone = useTimeZone();
@@ -89,7 +89,7 @@ export default function ExamplePage() {
           className="px-4 py-2 "
           variant="outline"
           onClick={async () => {
-            console.log(formatSeconds(await getIdleTimeToday(timezone)));
+            getIdleTimeToday(timezone);
           }}
         >
           get idle time today

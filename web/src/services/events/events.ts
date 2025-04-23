@@ -96,10 +96,9 @@ export const eventService: EventService = {
 
     const startUTC = new Date(startLocal.getTime() - timezone * 60 * 60 * 1000);
     const endUTC = new Date(endLocal.getTime() - timezone * 60 * 60 * 1000);
-    console.log(startUTC, endUTC); // This return from 12PM to 12AM of the current day
     const filteredEvents = events.filter((event) => {
       const eventDate = new Date(event.startTime);
-      console.log(eventDate);
+
       return eventDate >= startUTC && eventDate < endUTC;
     });
 

@@ -51,14 +51,12 @@ interface DayChartProps {
 const DayChart = ({ isLoading = false }: DayChartProps) => {
   const timezone = useTimeZone();
   const [chartData, setChartData] = useState<chart_data>([]);
-  const [totalCount, setTotalCount] = useState<number>(0);
 
   useEffect(() => {
     const fetchAndTransform = async () => {
       const eventGrouped = await getDayShiftEventsGrouped(timezone);
-      const data = transformGroupedEventsToChartData(eventGrouped, false); // `false` since this is day shift
+      const data = transformGroupedEventsToChartData(eventGrouped, false);
       setChartData(data);
-      setTotalCount(data.at(-1)?.cumulativeTotal ?? 0);
     };
 
     fetchAndTransform();
@@ -70,9 +68,6 @@ const DayChart = ({ isLoading = false }: DayChartProps) => {
         <CardTitle className="text-center text-md md:text-xl">
           Day Shift Unloading Chart
         </CardTitle>
-        <CardDescription className="text-center text-base">
-          Total: {totalCount} buckets (07:00-19:00)
-        </CardDescription>
       </CardHeader>
       <CardContent className="h-full">
         <div className="h-full w-full">
@@ -109,11 +104,6 @@ const DayChart = ({ isLoading = false }: DayChartProps) => {
                   width={50}
                 />
                 <Tooltip content={<CustomTooltip />} />
-                {/* <Legend
-                  verticalAlign="top"
-                  height={36}
-                  wrapperStyle={{ paddingTop: "10px" }}
-                /> */}
                 <Bar
                   dataKey="bucketsPerPeriod"
                   name="Buckets per 30 min"

@@ -7,7 +7,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { format } from "date-fns";
-import { Card, CardHeader } from "./ui/card";
+import { Card } from "./ui/card";
 
 type IdleDay = {
   date: string;
@@ -23,7 +23,12 @@ function formatSeconds(seconds: number) {
     .padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
 }
 
-export default function IdleTimeTable({ data }: { data: IdleDay[] }) {
+const data = [
+  { date: "2025-04-21", idleSeconds: 66600 },
+  { date: "2025-04-22", idleSeconds: 72000 },
+];
+
+const IdleTimeTable = () => {
   return (
     <Card>
       <Table>
@@ -44,4 +49,6 @@ export default function IdleTimeTable({ data }: { data: IdleDay[] }) {
       </Table>
     </Card>
   );
-}
+};
+
+export default IdleTimeTable;

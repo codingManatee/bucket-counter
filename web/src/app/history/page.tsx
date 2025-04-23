@@ -2,11 +2,6 @@ import IdleTimeTable from "@/components/idleTable";
 import { Button } from "@/components/ui/button";
 import { Download, RefreshCw } from "lucide-react";
 
-const data = [
-  { date: "2025-04-21", idleSeconds: 66600 },
-  { date: "2025-04-22", idleSeconds: 72000 },
-];
-
 const Page = () => {
   return (
     <div className="p-3 h-full">
@@ -23,7 +18,8 @@ const Page = () => {
           </Button>
         </div>
       </div>
-      <IdleTimeTable data={data} />
+
+      <IdleTimeTable />
     </div>
   );
 };
