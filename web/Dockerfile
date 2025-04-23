@@ -7,7 +7,7 @@ RUN apk add --no-cache python3 make g++ sqlite && \
 
 COPY package.json pnpm-lock.yaml ./
 
-RUN pnpm install --frozen-lockfile
+RUN pnpm install 
 
 COPY . .
 

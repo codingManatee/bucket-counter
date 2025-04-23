@@ -29,8 +29,8 @@ const Controller = () => {
 
   return (
     <>
-      <div className="md:col-span-1">
-        <Card className="h-full">
+      <div className="md:col-span-1 overflow-auto">
+        <Card className="h-full ">
           <CardHeader className=" flex flex-row items-center justify-between">
             <CardTitle>Status</CardTitle>
           </CardHeader>

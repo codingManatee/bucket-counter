@@ -60,19 +60,24 @@ const NightChart = () => {
   }, [timezone]);
 
   return (
-    <Card className="col-span-3 w-full">
+    <Card className="h-full py-1">
       <CardHeader>
-        <CardTitle className="text-center text-xl">
-          Night Shift Unloading Chart (19:00-7:00)
+        <CardTitle className="text-center text-md md:text-xl">
+          Night Shift Unloading Chart
         </CardTitle>
-        <CardDescription className="text-center text-base">
-          Total: {totalCount} buckets
-        </CardDescription>
       </CardHeader>
-      <CardContent>
-        <div className="h-[500px] w-full">
-          <ResponsiveContainer width="100%" height="100%">
-            <ComposedChart data={chartData}>
+      <CardContent className="h-full">
+        <div className="h-full w-full">
+          <ResponsiveContainer>
+            <ComposedChart
+              data={chartData}
+              margin={{
+                top: 0,
+                right: 0,
+                left: 0,
+                bottom: 0,
+              }}
+            >
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
               <XAxis
                 dataKey="time"
@@ -93,11 +98,6 @@ const NightChart = () => {
                 width={50}
               />
               <Tooltip content={<CustomTooltip />} />
-              <Legend
-                verticalAlign="top"
-                height={36}
-                wrapperStyle={{ paddingTop: "10px" }}
-              />
               <Bar
                 dataKey="bucketsPerPeriod"
                 name="Buckets per 30 min"

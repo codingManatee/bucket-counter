@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
 import { EventService } from "@/interfaces";
 import { FrigateEvent } from "@/types/FrigateEvent";
+import { startOfDay, endOfDay } from "date-fns";
 
 export const eventService: EventService = {
   async getAllEvents() {
@@ -95,11 +96,12 @@ export const eventService: EventService = {
 
     const startUTC = new Date(startLocal.getTime() - timezone * 60 * 60 * 1000);
     const endUTC = new Date(endLocal.getTime() - timezone * 60 * 60 * 1000);
-
     const filteredEvents = events.filter((event) => {
       const eventDate = new Date(event.startTime);
+
       return eventDate >= startUTC && eventDate < endUTC;
     });
+
     if (!grouped) return filteredEvents;
     const groupedByHalfHour: Record<string, typeof filteredEvents> = {};
     for (let hour = 19; hour < 24; hour++) {
@@ -163,5 +165,47 @@ export const eventService: EventService = {
         },
       },
     });
+  },
+  async getIdleTime(timezone: number, date?: string | Date) {
+    const localDate = date ? new Date(date) : new Date();
+
+    // Shift to local time
+    const localMidnight = new Date(
+      localDate.getTime() + timezone * 60 * 60 * 1000
+    );
+
+    // Get local day's start and end in that timezone
+    const localStart = startOfDay(localMidnight);
+    const localEnd = endOfDay(localMidnight);
+
+    // Convert those boundaries back to UTC
+    const utcStart = new Date(localStart.getTime() - timezone * 60 * 60 * 1000);
+    const utcEnd = new Date(localEnd.getTime() - timezone * 60 * 60 * 1000);
+
+    const events = await prisma.frigateEventMessage.findMany({
+      where: {
+        AND: [
+          { startTime: { lt: utcEnd.toISOString() } }, // events started before day ends
+          { endTime: { gt: utcStart.toISOString() } }, // events ended after day starts
+        ],
+      },
+      orderBy: { startTime: "asc" },
+    });
+
+    // Compute total duration
+    const totalUsedSeconds = events.reduce((sum, event) => {
+      const start = new Date(event.startTime);
+      const end = new Date(event.endTime);
+
+      // Clip to within current day
+      const clippedStart = start < utcStart ? utcStart : start;
+      const clippedEnd = end > utcEnd ? utcEnd : end;
+
+      const duration = (clippedEnd.getTime() - clippedStart.getTime()) / 1000;
+      return sum + duration;
+    }, 0);
+
+    const idleSeconds = 86400 - totalUsedSeconds;
+    return Math.max(0, Math.round(idleSeconds));
   },
 };

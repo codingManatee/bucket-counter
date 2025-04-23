@@ -16,4 +16,5 @@ export interface EventService {
   createEvents: (
     event: FrigateEvent
   ) => Promise<FrigateEventMessage | undefined>;
+  getIdleTime: (timezone: number, date?: Date | string) => Promise<number>;
 }

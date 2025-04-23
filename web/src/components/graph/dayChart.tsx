@@ -51,35 +51,30 @@ interface DayChartProps {
 const DayChart = ({ isLoading = false }: DayChartProps) => {
   const timezone = useTimeZone();
   const [chartData, setChartData] = useState<chart_data>([]);
-  const [totalCount, setTotalCount] = useState<number>(0);
 
   useEffect(() => {
     const fetchAndTransform = async () => {
       const eventGrouped = await getDayShiftEventsGrouped(timezone);
-      const data = transformGroupedEventsToChartData(eventGrouped, false); // `false` since this is day shift
+      const data = transformGroupedEventsToChartData(eventGrouped, false);
       setChartData(data);
-      setTotalCount(data.at(-1)?.cumulativeTotal ?? 0);
     };
 
     fetchAndTransform();
   }, [timezone]);
 
   return (
-    <Card className="h-full">
+    <Card className="h-full py-1">
       <CardHeader>
-        <CardTitle className="text-center text-xl">
-          Day Shift Unloading Chart (07:00-19:00)
+        <CardTitle className="text-center text-md md:text-xl">
+          Day Shift Unloading Chart
         </CardTitle>
-        <CardDescription className="text-center text-base">
-          Total: {totalCount} buckets
-        </CardDescription>
       </CardHeader>
       <CardContent className="h-full">
         <div className="h-full w-full">
           {isLoading ? (
             <Skeleton className="w-full h-full" />
           ) : (
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer>
               <ComposedChart
                 data={chartData}
                 margin={{
@@ -97,7 +92,7 @@ const DayChart = ({ isLoading = false }: DayChartProps) => {
                     position: "insideBottom",
                   }}
                   tick={{ fontSize: 12 }}
-                  height={60}
+                  height={50}
                 />
                 <YAxis
                   label={{
@@ -106,14 +101,9 @@ const DayChart = ({ isLoading = false }: DayChartProps) => {
                     position: "insideLeft",
                   }}
                   tick={{ fontSize: 12 }}
-                  width={80}
+                  width={50}
                 />
                 <Tooltip content={<CustomTooltip />} />
-                <Legend
-                  verticalAlign="top"
-                  height={36}
-                  wrapperStyle={{ paddingTop: "10px" }}
-                />
                 <Bar
                   dataKey="bucketsPerPeriod"
                   name="Buckets per 30 min"

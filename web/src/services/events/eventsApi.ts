@@ -34,3 +34,6 @@ export const createEvent = (event: FrigateEvent) =>
     },
     body: JSON.stringify(event),
   });
+
+export const getIdleTimeToday = (timezone: number) =>
+  apiFetch<number>(`/api/events/idle-time?timezone=${timezone}`);
