@@ -6,7 +6,7 @@ import {
   getAllEvents,
   getDayShiftEvents,
   getDayShiftEventsGrouped,
-  getIdleTimeToday,
+  getIdleTime,
   getNightShiftEvents,
   getNightShiftEventsGrouped,
   getTodayShiftEvents,
@@ -89,7 +89,7 @@ export default function ExamplePage() {
           className="px-4 py-2 "
           variant="outline"
           onClick={async () => {
-            getIdleTimeToday(timezone);
+            getIdleTime(timezone);
           }}
         >
           get idle time today

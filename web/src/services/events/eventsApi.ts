@@ -7,23 +7,32 @@ type GroupedEvents = Record<string, FrigateEventMessage[]>;
 export const getAllEvents = () =>
   apiFetch<FrigateEventMessage[]>("/api/events");
 
-export const getTodayShiftEvents = (timezone: number) =>
-  apiFetch<FrigateEventMessage[]>(`/api/events/today?timezone=${timezone}`);
-
-export const getDayShiftEvents = (timezone: number) =>
-  apiFetch<FrigateEventMessage[]>(`/api/events/day-shift?timezone=${timezone}`);
-
-export const getNightShiftEvents = (timezone: number) =>
+export const getTodayShiftEvents = (timezone: number, date?: string) =>
   apiFetch<FrigateEventMessage[]>(
-    `/api/events/night-shift?timezone=${timezone}`
+    `/api/events/today?timezone=${timezone}` + (date ? `&date=${date}` : "")
   );
 
-export const getDayShiftEventsGrouped = (timezone: number) =>
-  apiFetch<GroupedEvents>(`/api/events/day-shift-grouped?timezone=${timezone}`);
+export const getDayShiftEvents = (timezone: number, date?: string) =>
+  apiFetch<FrigateEventMessage[]>(
+    `/api/events/day-shift?timezone=${timezone}` + (date ? `&date=${date}` : "")
+  );
 
-export const getNightShiftEventsGrouped = (timezone: number) =>
+export const getNightShiftEvents = (timezone: number, date?: string) =>
+  apiFetch<FrigateEventMessage[]>(
+    `/api/events/night-shift?timezone=${timezone}` +
+      (date ? `&date=${date}` : "")
+  );
+
+export const getDayShiftEventsGrouped = (timezone: number, date?: string) =>
   apiFetch<GroupedEvents>(
-    `/api/events/night-shift-grouped?timezone=${timezone}`
+    `/api/events/day-shift-grouped?timezone=${timezone}` +
+      (date ? `&date=${date}` : "")
+  );
+
+export const getNightShiftEventsGrouped = (timezone: number, date?: string) =>
+  apiFetch<GroupedEvents>(
+    `/api/events/night-shift-grouped?timezone=${timezone}` +
+      (date ? `&date=${date}` : "")
   );
 
 export const createEvent = (event: FrigateEvent) =>
@@ -35,5 +44,7 @@ export const createEvent = (event: FrigateEvent) =>
     body: JSON.stringify(event),
   });
 
-export const getIdleTimeToday = (timezone: number) =>
-  apiFetch<number>(`/api/events/idle-time?timezone=${timezone}`);
+export const getIdleTime = (timezone: number, date?: string) =>
+  apiFetch<number>(
+    `/api/events/idle-time?timezone=${timezone}` + (date ? `&date=${date}` : "")
+  );
