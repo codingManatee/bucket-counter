@@ -128,3 +128,9 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+  .header {
+    @apply text-3xl font-extrabold pb-2;
+  }
+}

@@ -68,10 +68,10 @@ const DayChart = ({ isLoading = false }: DayChartProps) => {
     <Card className="h-full py-1">
       <CardHeader>
         <CardTitle className="text-center text-md md:text-xl">
-          Day Shift Unloading Chart (07:00-19:00)
+          Day Shift Unloading Chart
         </CardTitle>
         <CardDescription className="text-center text-base">
-          Total: {totalCount} buckets
+          Total: {totalCount} buckets (07:00-19:00)
         </CardDescription>
       </CardHeader>
       <CardContent className="h-full">
@@ -79,7 +79,7 @@ const DayChart = ({ isLoading = false }: DayChartProps) => {
           {isLoading ? (
             <Skeleton className="w-full h-full" />
           ) : (
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer>
               <ComposedChart
                 data={chartData}
                 margin={{

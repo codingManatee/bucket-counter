@@ -1,15 +1,3 @@
-"use client";
-
-import { useState } from "react";
-import {
-  Check,
-  ChevronDown,
-  ChevronRight,
-  Moon,
-  Search,
-  Sun,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -18,235 +6,42 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { format } from "date-fns";
+import { Card, CardHeader } from "./ui/card";
 
-interface ShiftData {
-  bucketsUnloaded: number;
-  idleTime: string;
-}
-
-interface BucketData {
+type IdleDay = {
   date: string;
-  bucketsUnloaded: number;
-  idleTime: string;
-  dayShift: ShiftData;
-  nightShift: ShiftData;
-}
-
-const IdleTable = () => {
-  const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
-
-  const toggleRow = (date: string) => {
-    setExpandedRows((prev) => ({
-      ...prev,
-      [date]: !prev[date],
-    }));
-  };
-
-  const bucketData: BucketData[] = [
-    {
-      date: "01.04",
-      bucketsUnloaded: 12,
-      idleTime: "7h 20m",
-      dayShift: { bucketsUnloaded: 7, idleTime: "3h 45m" },
-      nightShift: { bucketsUnloaded: 5, idleTime: "3h 35m" },
-    },
-    {
-      date: "02.04",
-      bucketsUnloaded: 13,
-      idleTime: "7h 10m",
-      dayShift: { bucketsUnloaded: 8, idleTime: "3h 30m" },
-      nightShift: { bucketsUnloaded: 5, idleTime: "3h 40m" },
-    },
-    {
-      date: "03.04",
-      bucketsUnloaded: 15,
-      idleTime: "6h 40m",
-
-      dayShift: { bucketsUnloaded: 9, idleTime: "3h 10m" },
-      nightShift: { bucketsUnloaded: 6, idleTime: "3h 30m" },
-    },
-    {
-      date: "04.04",
-      bucketsUnloaded: 14,
-      idleTime: "6h 50m",
-
-      dayShift: { bucketsUnloaded: 8, idleTime: "3h 20m" },
-      nightShift: { bucketsUnloaded: 6, idleTime: "3h 30m" },
-    },
-    {
-      date: "05.04",
-      bucketsUnloaded: 16,
-      idleTime: "6h 25m",
-
-      dayShift: { bucketsUnloaded: 10, idleTime: "3h 05m" },
-      nightShift: { bucketsUnloaded: 6, idleTime: "3h 20m" },
-    },
-    {
-      date: "06.04",
-      bucketsUnloaded: 13,
-      idleTime: "7h 00m",
-
-      dayShift: { bucketsUnloaded: 7, idleTime: "3h 30m" },
-      nightShift: { bucketsUnloaded: 6, idleTime: "3h 30m" },
-    },
-    {
-      date: "07.04",
-      bucketsUnloaded: 11,
-      idleTime: "7h 45m",
-
-      dayShift: { bucketsUnloaded: 6, idleTime: "3h 55m" },
-      nightShift: { bucketsUnloaded: 5, idleTime: "3h 50m" },
-    },
-  ];
-
-  return (
-    <Card className="w-full border shadow-sm h-[500px] flex flex-col justify-between md:max-h-full">
-      <CardHeader className="shrink-0">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-lg font-semibold">
-            Bucket Unloading History
-          </CardTitle>
-          <Badge variant="outline" className="ml-2">
-            Last 7 Days
-          </Badge>
-        </div>
-      </CardHeader>
-      <div className="flex flex-col flex-1 overflow-scroll">
-        <CardContent className="p-0 h-full">
-          <Table>
-            <TableHeader className="">
-              <TableRow className="hover:bg-transparent">
-                <TableHead className="w-[100px] font-medium">Date</TableHead>
-                <TableHead className="font-medium">Buckets Unloaded</TableHead>
-                <TableHead className="font-medium">Idle Time</TableHead>
-                <TableHead className="w-[100px] text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {bucketData.map((row) => (
-                <>
-                  <TableRow
-                    key={row.date}
-                    className={`hover:bg-muted/50 cursor-pointer ${
-                      expandedRows[row.date] ? "bg-muted/30" : ""
-                    }`}
-                    onClick={() => toggleRow(row.date)}
-                  >
-                    <TableCell className="font-medium">
-                      <div className="flex items-center">
-                        {expandedRows[row.date] ? (
-                          <ChevronDown className="h-4 w-4 mr-2 text-slate-500" />
-                        ) : (
-                          <ChevronRight className="h-4 w-4 mr-2 text-slate-500" />
-                        )}
-                        {row.date}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        {row.bucketsUnloaded} buckets
-                      </div>
-                    </TableCell>
-                    <TableCell>{row.idleTime}</TableCell>
-                    <TableCell className="text-right">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          // View details logic here
-                        }}
-                      >
-                        <Search className="h-4 w-4" />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                  {expandedRows[row.date] && (
-                    <TableRow className="bg-slate-50/50 hover:bg-slate-50/50">
-                      <TableCell colSpan={4} className="p-0">
-                        <div className="px-10 py-3">
-                          <div className="grid grid-cols-2 gap-4">
-                            <div className="border rounded-md p-3">
-                              <div className="flex items-center mb-2">
-                                <Sun className="h-4 w-4 mr-2 text-amber-500" />
-                                <h4 className="font-medium">Day Shift</h4>
-                              </div>
-                              <div className="space-y-2 text-sm">
-                                <div className="flex justify-between">
-                                  <span className="text-slate-500">
-                                    Buckets Unloaded:
-                                  </span>
-                                  <span className="font-medium flex items-center">
-                                    {row.dayShift.bucketsUnloaded} buckets
-                                  </span>
-                                </div>
-                                <div className="flex justify-between">
-                                  <span className="text-slate-500">
-                                    Idle Time:
-                                  </span>
-                                  <span className="font-medium">
-                                    {row.dayShift.idleTime}
-                                  </span>
-                                </div>
-                                <div className="flex justify-end mt-2">
-                                  <Button variant="outline" size="sm">
-                                    <Search className="h-3 w-3 mr-1" />
-                                    View Details
-                                  </Button>
-                                </div>
-                              </div>
-                            </div>
-                            <div className="border rounded-md p-3">
-                              <div className="flex items-center mb-2">
-                                <Moon className="h-4 w-4 mr-2 text-indigo-500" />
-                                <h4 className="font-medium">Night Shift</h4>
-                              </div>
-                              <div className="space-y-2 text-sm">
-                                <div className="flex justify-between">
-                                  <span className="text-slate-500">
-                                    Buckets Unloaded:
-                                  </span>
-                                  <span className="font-medium flex items-center">
-                                    {row.nightShift.bucketsUnloaded} buckets
-                                  </span>
-                                </div>
-                                <div className="flex justify-between">
-                                  <span className="text-slate-500">
-                                    Idle Time:
-                                  </span>
-                                  <span className="font-medium">
-                                    {row.nightShift.idleTime}
-                                  </span>
-                                </div>
-                                <div className="flex justify-end mt-2">
-                                  <Button variant="outline" size="sm">
-                                    <Search className="h-3 w-3 mr-1" />
-                                    View Details
-                                  </Button>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </div>
-    </Card>
-  );
+  idleSeconds: number;
 };
 
-export default IdleTable;
+function formatSeconds(seconds: number) {
+  const hrs = Math.floor(seconds / 3600);
+  const mins = Math.floor((seconds % 3600) / 60);
+  const secs = seconds % 60;
+  return `${hrs.toString().padStart(2, "0")}:${mins
+    .toString()
+    .padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+}
+
+export default function IdleTimeTable({ data }: { data: IdleDay[] }) {
+  return (
+    <Card>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Date</TableHead>
+            <TableHead>Idle Time</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {data.map((row) => (
+            <TableRow key={row.date}>
+              <TableCell>{format(new Date(row.date), "yyyy-MM-dd")}</TableCell>
+              <TableCell>{formatSeconds(row.idleSeconds)}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </Card>
+  );
+}
