@@ -79,15 +79,6 @@ export default function ExamplePage() {
           className="px-4 py-2 "
           variant="outline"
           onClick={() => {
-            getNightShiftEventsGrouped(timezone);
-          }}
-        >
-          get sample event night shift grouped
-        </Button>
-        <Button
-          className="px-4 py-2 "
-          variant="outline"
-          onClick={() => {
             getTodayShiftEvents(timezone);
           }}
         >

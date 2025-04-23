@@ -96,11 +96,13 @@ export const eventService: EventService = {
 
     const startUTC = new Date(startLocal.getTime() - timezone * 60 * 60 * 1000);
     const endUTC = new Date(endLocal.getTime() - timezone * 60 * 60 * 1000);
-
+    console.log(startUTC, endUTC); // This return from 12PM to 12AM of the current day
     const filteredEvents = events.filter((event) => {
       const eventDate = new Date(event.startTime);
+      console.log(eventDate);
       return eventDate >= startUTC && eventDate < endUTC;
     });
+
     if (!grouped) return filteredEvents;
     const groupedByHalfHour: Record<string, typeof filteredEvents> = {};
     for (let hour = 19; hour < 24; hour++) {
@@ -165,12 +167,12 @@ export const eventService: EventService = {
       },
     });
   },
-  async getIdleTime(timezoneOffsetHours: number, date?: string | Date) {
+  async getIdleTime(timezone: number, date?: string | Date) {
     const localDate = date ? new Date(date) : new Date();
 
     // Shift to local time
     const localMidnight = new Date(
-      localDate.getTime() + timezoneOffsetHours * 60 * 60 * 1000
+      localDate.getTime() + timezone * 60 * 60 * 1000
     );
 
     // Get local day's start and end in that timezone
@@ -178,12 +180,8 @@ export const eventService: EventService = {
     const localEnd = endOfDay(localMidnight);
 
     // Convert those boundaries back to UTC
-    const utcStart = new Date(
-      localStart.getTime() - timezoneOffsetHours * 60 * 60 * 1000
-    );
-    const utcEnd = new Date(
-      localEnd.getTime() - timezoneOffsetHours * 60 * 60 * 1000
-    );
+    const utcStart = new Date(localStart.getTime() - timezone * 60 * 60 * 1000);
+    const utcEnd = new Date(localEnd.getTime() - timezone * 60 * 60 * 1000);
 
     const events = await prisma.frigateEventMessage.findMany({
       where: {
