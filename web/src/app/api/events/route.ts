@@ -1,5 +1,5 @@
 import { eventService } from "@/services/events/events";
-import { FrigateEvent } from "@/types/FrigateEvent";
+import { FrigateEvent } from "@/types/frigateEvent";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(): Promise<NextResponse> {

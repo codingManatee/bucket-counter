@@ -20,7 +20,7 @@ import { useState, useEffect } from "react";
 import { useTimeZone } from "@/stores/useMqttStore";
 import { getNightShiftEventsGrouped } from "@/services/events/eventsApi";
 import { transformGroupedEventsToChartData } from "@/lib/helper";
-import { ChartData } from "@/types/FrigateEvent";
+import { ChartData } from "@/types/chart";
 
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {

@@ -49,7 +49,7 @@ const IdleTimeTable = () => {
           results.push({ date: isoDate, counts: count, idleSeconds: idleTime });
         }
 
-        setData(results.reverse()); // reverse to make it oldest to newest
+        setData(results.reverse());
       } catch (error) {
         console.error("Failed to fetch events:", error);
       } finally {

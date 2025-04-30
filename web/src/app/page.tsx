@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useMqttConnection } from "@/hooks/useMqttConnection";
 import {
-  useIsConnected,
+  useConnectionStatus,
   useLogs,
   useMqttActions,
   useObjectCounts,
@@ -12,11 +12,20 @@ import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { ChartNoAxesCombined, RotateCcw, ScrollText, Wifi } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-export default function Home() {
+const statusStyles = {
+  connected:
+    "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 hover:bg-green-200",
+  reconnecting:
+    "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400 hover:bg-yellow-200",
+  disconnected:
+    "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 hover:bg-red-200",
+};
+
+const Page = () => {
   const logs = useLogs();
   const router = useRouter();
 
-  const isConnected = useIsConnected();
+  const connectionStatus = useConnectionStatus();
   const objectCount = useObjectCounts();
   const { resetCounter, addLog, resetLog } = useMqttActions();
 
@@ -96,13 +105,10 @@ export default function Home() {
               </CardTitle>
             </CardHeader>
             <Button
-              className={`py-2 px-4 rounded-md text-center font-medium w-full ${
-                isConnected
-                  ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 hover:bg-green-200"
-                  : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 hover:bg-red-200"
-              }`}
+              className={`py-2 px-4 rounded-md text-center font-medium w-full ${statusStyles[connectionStatus]}`}
             >
-              {isConnected ? "Connected" : "Disconnected"}
+              {connectionStatus.charAt(0).toUpperCase() +
+                connectionStatus.slice(1)}
             </Button>
           </CardContent>
         </Card>
@@ -134,4 +140,6 @@ export default function Home() {
       </div>
     </div>
   );
-}
+};
+
+export default Page;

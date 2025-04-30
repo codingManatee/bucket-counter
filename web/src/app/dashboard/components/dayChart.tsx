@@ -21,7 +21,7 @@ import { getDayShiftEventsGrouped } from "@/services/events/eventsApi";
 import { useTimeZone } from "@/stores/useMqttStore";
 import { transformGroupedEventsToChartData } from "@/lib/helper";
 import { Skeleton } from "../../../components/ui/skeleton";
-import { ChartData } from "@/types/FrigateEvent";
+import { ChartData } from "@/types/chart";
 
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {

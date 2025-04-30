@@ -1,5 +1,3 @@
-import { FrigateEventMessage } from "@prisma/client";
-
 export type FrigateEventType = "new" | "update" | "end";
 
 export type FrigateEvent = {
@@ -23,11 +21,3 @@ export type FrigateReview = {
     audio: string[];
   };
 };
-
-export type ChartData = {
-  time: string;
-  bucketsPerPeriod: number;
-  cumulativeTotal: number;
-};
-
-export type GroupedEvents = Record<string, FrigateEventMessage[]>;

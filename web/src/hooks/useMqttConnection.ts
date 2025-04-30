@@ -2,20 +2,21 @@
 import { useCallback, useEffect } from "react";
 import mqtt from "mqtt";
 import {
-  useIsConnected,
+  useConnectionStatus,
   useMqttActions,
   useObjectCounts,
 } from "@/stores/useMqttStore";
-import { FrigateEvent } from "@/types/FrigateEvent";
+import { FrigateEvent } from "@/types/frigateEvent";
 import { createEvent } from "@/services/events/eventsApi";
 
 export const useMqttConnection = (mqttUri: string, topic: string) => {
-  const { setIsConnected, addLog, incrementObjectCount } = useMqttActions();
-  const connected = useIsConnected();
+  const { addLog, incrementObjectCount, setConnectionStatus } =
+    useMqttActions();
+  const connectionStatus = useConnectionStatus();
   const objectCount = useObjectCounts();
 
   const connect = useCallback(() => {
-    if (connected) return;
+    if (connectionStatus === "connected") return;
 
     const client = mqtt.connect(mqttUri, {
       clientId: "web-client",
@@ -25,7 +26,7 @@ export const useMqttConnection = (mqttUri: string, topic: string) => {
 
     client.on("connect", () => {
       // addLog("System connected - Connected to MQTT");
-      setIsConnected(true);
+      setConnectionStatus("connected");
       client.subscribe(topic);
     });
 
@@ -58,8 +59,14 @@ export const useMqttConnection = (mqttUri: string, topic: string) => {
       }
     });
 
+    client.on("reconnect", () => {
+      if (connectionStatus !== "reconnecting") {
+        setConnectionStatus("reconnecting");
+      }
+    });
+
     client.on("disconnect", () => {
-      setIsConnected(false);
+      setConnectionStatus("disconnected");
     });
 
     client.on("error", (err) => {

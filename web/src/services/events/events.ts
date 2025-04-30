@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
 import { EventService } from "@/interfaces";
-import { FrigateEvent } from "@/types/FrigateEvent";
+import { FrigateEvent } from "@/types/frigateEvent";
 import { startOfDay, endOfDay } from "date-fns";
 
 export const eventService: EventService = {
