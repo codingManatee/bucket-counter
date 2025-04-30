@@ -40,30 +40,18 @@ services:
     container_name: webUI
     build:
       context: ./web
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
+    image: bucket-counter-web:dev
     restart: unless-stopped
     ports:
       - "3000:3000"
+      - "5555:5555"
     depends_on:
       - frigate
       - mqtt
     volumes:
       - ./web:/app
-      - ./web/src/data:/app/data
       - /app/node_modules
-    networks:
-      - frigate-net
-
-  prisma-studio:
-    container_name: database
-    build:
-      context: ./web
-    ports:
-      - "5555:5555"
-    volumes:
-      - ./web:/app
-    working_dir: /app
-    command: npx prisma studio
     networks:
       - frigate-net
 

@@ -4,8 +4,16 @@
 
 To start the application with Docker:
 
+### For Production:
+
 ```bash
-docker-compose up -d
+docker compose -f docker-compose.yaml up --build -d
+```
+
+### For Development:
+
+```bash
+docker compose -f docker-compose.dev.yaml up --build -d
 ```
 
 ## Frigate Configuration
@@ -18,15 +26,15 @@ docker-compose up -d
 
 ### Detection Configuration
 
-Modify the configuration to detect specific objects/people:
+Modify the configuration to set alert for specific objects/people:
 
 ```
 review:
-    detections:
+    alert:
         required_zones:
-            - walking_zone
+            - {zone}
         labels:
-            - person
+            - {object}
 ```
 
 ### Camera Setup
@@ -58,10 +66,6 @@ When configuring your camera, note that this container's network is named 'friga
   1. Click "Connect" button
   2. Click "Start Logging" to begin the application
   3. Check the status bar - it should display "Connected" when successfully connected to the Mosquitto MQTT broker
-
-## Database Administration
-
-- **Access**: Prisma SQLite database administration interface is available at http://localhost:5000
 
 ## Cam stream
 
