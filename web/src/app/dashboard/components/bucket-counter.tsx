@@ -6,7 +6,7 @@ import {
 } from "@/services/events/eventsApi";
 import { useTimeZone } from "@/stores/useMqttStore";
 import { useState, useEffect } from "react";
-import { Card, CardContent } from "./ui/card";
+import { Card, CardContent } from "../../../components/ui/card";
 
 const BucketCounter = () => {
   const timezone = useTimeZone();

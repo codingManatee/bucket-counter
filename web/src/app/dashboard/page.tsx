@@ -1,18 +1,12 @@
 "use client";
 
-import BucketCounter from "@/components/bucket-counter";
-import DayChart from "@/components/graph/dayChart";
-import NightChart from "@/components/graph/nightChart";
+import BucketCounter from "@/app/dashboard/components/bucket-counter";
+import DayChart from "@/app/dashboard/components/dayChart";
+import NightChart from "@/app/dashboard/components/nightChart";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
-
-interface BucketData {
-  total: number;
-  dayShift: number;
-  nightShift: number;
-}
 
 const Page = () => {
   const router = useRouter();

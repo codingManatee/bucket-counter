@@ -4,7 +4,6 @@ import {
   Bar,
   CartesianGrid,
   ComposedChart,
-  Legend,
   Line,
   ResponsiveContainer,
   Tooltip,
@@ -14,21 +13,24 @@ import {
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
-} from "../ui/card";
+} from "../../../components/ui/card";
 import { useEffect, useState } from "react";
 import { getDayShiftEventsGrouped } from "@/services/events/eventsApi";
 import { useTimeZone } from "@/stores/useMqttStore";
-import { transformGroupedEventsToChartData } from "@/utils/helper";
-import { Skeleton } from "../ui/skeleton";
+import { transformGroupedEventsToChartData } from "@/lib/helper";
+import { Skeleton } from "../../../components/ui/skeleton";
 
-type chart_data = {
-  time: string;
-  bucketsPerPeriod: number;
-  cumulativeTotal: number;
-}[];
+type chart_data = Array<
+  [
+    {
+      time: string;
+      bucketsPerPeriod: number;
+      cumulativeTotal: number;
+    }
+  ]
+>;
 
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {

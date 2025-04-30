@@ -1,5 +1,5 @@
 import { FrigateEventMessage } from "@prisma/client";
-import { apiFetch } from "@/utils/apiFetch";
+import { apiFetch } from "@/lib/apiFetch";
 import { FrigateEvent } from "@/types/FrigateEvent";
 
 type GroupedEvents = Record<string, FrigateEventMessage[]>;

@@ -4,7 +4,6 @@ import {
   Bar,
   CartesianGrid,
   ComposedChart,
-  Legend,
   Line,
   ResponsiveContainer,
   Tooltip,
@@ -14,14 +13,13 @@ import {
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
-} from "../ui/card";
+} from "../../../components/ui/card";
 import { useState, useEffect } from "react";
 import { useTimeZone } from "@/stores/useMqttStore";
 import { getNightShiftEventsGrouped } from "@/services/events/eventsApi";
-import { transformGroupedEventsToChartData } from "@/utils/helper";
+import { transformGroupedEventsToChartData } from "@/lib/helper";
 
 type chart_data = {
   time: string;

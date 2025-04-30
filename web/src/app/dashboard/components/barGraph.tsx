@@ -14,7 +14,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "../ui/card";
+} from "../../../components/ui/card";
 import { useEffect, useState } from "react";
 
 const chartConfig = {

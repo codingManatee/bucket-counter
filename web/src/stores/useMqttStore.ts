@@ -10,7 +10,6 @@ export enum shiftDisplay {
 interface MqttStore {
   objectCount: number;
   isConnected: boolean;
-  isLogging: boolean;
   logs: string[];
   timezone: number;
   selectedDay: Date;
@@ -18,7 +17,6 @@ interface MqttStore {
   actions: {
     incrementObjectCount: () => void;
     setIsConnected: (connected: boolean) => void;
-    setIsLogging: (logging: boolean) => void;
     addLog: (entry: string) => void;
     resetLog: () => void;
     resetCounter: () => void;
@@ -33,7 +31,6 @@ const useMqttStore = create<MqttStore>()(
     (set) => ({
       objectCount: 0,
       isConnected: false,
-      isLogging: false,
       logs: [],
       timezone: 0,
       selectedDay: new Date(),
@@ -42,7 +39,6 @@ const useMqttStore = create<MqttStore>()(
         incrementObjectCount: () =>
           set((state) => ({ objectCount: state.objectCount + 1 })),
         setIsConnected: (connected) => set({ isConnected: connected }),
-        setIsLogging: (logging) => set({ isLogging: logging }),
         addLog: (entry) => {
           const timestamp = new Date().toLocaleTimeString();
           set((state) => ({
@@ -69,8 +65,7 @@ const useMqttStore = create<MqttStore>()(
       partialize: (state) =>
         Object.fromEntries(
           Object.entries(state).filter(
-            ([key]) =>
-              key !== "isConnected" && key !== "actions" && key !== "isLogging"
+            ([key]) => key !== "isConnected" && key !== "actions"
           )
         ),
       storage: createJSONStorage(() => localStorage),
@@ -80,7 +75,6 @@ const useMqttStore = create<MqttStore>()(
 
 export const useMqttActions = () => useMqttStore((state) => state.actions);
 export const useIsConnected = () => useMqttStore((state) => state.isConnected);
-export const useIsLogging = () => useMqttStore((state) => state.isLogging);
 export const useLogs = () => useMqttStore((state) => state.logs);
 export const useObjectCounts = () => useMqttStore((state) => state.objectCount);
 export const useTimeZone = () => useMqttStore((state) => state.timezone);

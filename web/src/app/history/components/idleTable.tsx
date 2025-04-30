@@ -8,15 +8,10 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { format } from "date-fns";
-import { Card } from "./ui/card";
 import { useEffect, useState } from "react";
 import { useTimeZone } from "@/stores/useMqttStore";
 import { getIdleTime, getTodayShiftEvents } from "@/services/events/eventsApi";
-
-type IdleDay = {
-  date: string;
-  idleSeconds: number;
-};
+import { Card } from "@/components/ui/card";
 
 type tableData = {
   date: string;

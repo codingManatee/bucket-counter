@@ -12,7 +12,7 @@ import {
   getTodayShiftEvents,
 } from "@/services/events/eventsApi";
 import { useTimeZone } from "@/stores/useMqttStore";
-import { generateRandomPayload } from "@/utils/helper";
+import { generateRandomPayload } from "@/lib/helper";
 
 export default function ExamplePage() {
   const timezone = useTimeZone();

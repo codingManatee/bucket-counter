@@ -1,8 +1,8 @@
 "use client";
-import IdleTimeTable from "@/components/idleTable";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Download, RefreshCw } from "lucide-react";
 import { useRouter } from "next/navigation";
+import IdleTimeTable from "./components/idleTable";
 
 const Page = () => {
   const router = useRouter();
