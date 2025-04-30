@@ -18,15 +18,6 @@ import {
 import { useEffect, useState } from "react";
 import { FrigateEventMessage } from "@prisma/client";
 
-const chartData = [
-  { month: "January", desktop: 186 },
-  { month: "February", desktop: 305 },
-  { month: "March", desktop: 237 },
-  { month: "April", desktop: 73 },
-  { month: "May", desktop: 209 },
-  { month: "June", desktop: 214 },
-];
-
 const chartConfig = {
   desktop: {
     label: "Desktop",
@@ -102,7 +93,7 @@ const CumulativeChart = () => {
         });
 
         events.forEach((event: FrigateEventMessage) => {
-          const eventDate = new Date(event.startTime * 1000);
+          const eventDate = new Date(Number(event.startTime) * 1000);
           const hour = eventDate.getHours().toString();
           if (hour in hourCounts) {
             hourCounts[hour]++;

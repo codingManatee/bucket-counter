@@ -21,16 +21,7 @@ import { getDayShiftEventsGrouped } from "@/services/events/eventsApi";
 import { useTimeZone } from "@/stores/useMqttStore";
 import { transformGroupedEventsToChartData } from "@/lib/helper";
 import { Skeleton } from "../../../components/ui/skeleton";
-
-type chart_data = Array<
-  [
-    {
-      time: string;
-      bucketsPerPeriod: number;
-      cumulativeTotal: number;
-    }
-  ]
->;
+import { ChartData } from "@/types/FrigateEvent";
 
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
@@ -52,7 +43,7 @@ interface DayChartProps {
 
 const DayChart = ({ isLoading = false }: DayChartProps) => {
   const timezone = useTimeZone();
-  const [chartData, setChartData] = useState<chart_data>([]);
+  const [chartData, setChartData] = useState<ChartData[]>([]);
 
   useEffect(() => {
     const fetchAndTransform = async () => {
