@@ -7,13 +7,27 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
     const { searchParams } = new URL(request.url);
     const timezone = Number(searchParams.get("timezone")) || 0;
+    const dateParam = searchParams.get("date");
+    let date: Date | undefined;
+    if (dateParam) {
+      const parsed = new Date(dateParam);
+      if (isNaN(parsed.getTime())) {
+        return NextResponse.json(
+          { error: "Invalid date format" },
+          { status: 400 }
+        );
+      }
+      date = parsed;
+    }
     const dayShiftEvents = (await eventService.getEventsDayShift(
       timezone,
-      false
+      false,
+      date
     )) as FrigateEventMessage[];
     const nightShiftEvents = (await eventService.getEventsNightShift(
       timezone,
-      false
+      false,
+      date
     )) as FrigateEventMessage[];
     return NextResponse.json([...dayShiftEvents, ...nightShiftEvents], {
       status: 200,

@@ -1,30 +1,23 @@
+import { ShiftDisplay } from "@/enums/mqttStore";
+import { ConnectionStatus } from "@/types/mqttStore";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
-export enum shiftDisplay {
-  day = "day",
-  night = "night",
-  today = "today",
-}
-
 interface MqttStore {
   objectCount: number;
-  isConnected: boolean;
-  isLogging: boolean;
+  connectionStatus: ConnectionStatus;
   logs: string[];
   timezone: number;
   selectedDay: Date;
-  selectedShiftDisplay: shiftDisplay;
+  selectedShiftDisplay: ShiftDisplay;
   actions: {
     incrementObjectCount: () => void;
-    setIsConnected: (connected: boolean) => void;
-    setIsLogging: (logging: boolean) => void;
+    setConnectionStatus: (status: ConnectionStatus) => void;
     addLog: (entry: string) => void;
     resetLog: () => void;
     resetCounter: () => void;
     setTimeZone: (timezone: number) => void;
-    setSelectedDay: (date: Date) => void;
-    setSelectedShiftDisplay: (shift: shiftDisplay) => void;
+    setSelectedShiftDisplay: (shift: ShiftDisplay) => void;
   };
 }
 
@@ -32,17 +25,16 @@ const useMqttStore = create<MqttStore>()(
   persist(
     (set) => ({
       objectCount: 0,
-      isConnected: false,
-      isLogging: false,
+      connectionStatus: "disconnected",
       logs: [],
       timezone: 0,
       selectedDay: new Date(),
-      selectedShiftDisplay: shiftDisplay.day,
+      selectedShiftDisplay: ShiftDisplay.DAY,
       actions: {
         incrementObjectCount: () =>
           set((state) => ({ objectCount: state.objectCount + 1 })),
-        setIsConnected: (connected) => set({ isConnected: connected }),
-        setIsLogging: (logging) => set({ isLogging: logging }),
+        setConnectionStatus: (connectionStatus) =>
+          set({ connectionStatus: connectionStatus }),
         addLog: (entry) => {
           const timestamp = new Date().toLocaleTimeString();
           set((state) => ({
@@ -59,7 +51,7 @@ const useMqttStore = create<MqttStore>()(
           });
         },
         setTimeZone: (timezone) => set({ timezone: timezone }),
-        setSelectedDay: (date) => set({ selectedDay: date }),
+
         setSelectedShiftDisplay: (shift) =>
           set({ selectedShiftDisplay: shift }),
       },
@@ -69,8 +61,7 @@ const useMqttStore = create<MqttStore>()(
       partialize: (state) =>
         Object.fromEntries(
           Object.entries(state).filter(
-            ([key]) =>
-              key !== "isConnected" && key !== "actions" && key !== "isLogging"
+            ([key]) => key !== "isConnected" && key !== "actions"
           )
         ),
       storage: createJSONStorage(() => localStorage),
@@ -79,8 +70,8 @@ const useMqttStore = create<MqttStore>()(
 );
 
 export const useMqttActions = () => useMqttStore((state) => state.actions);
-export const useIsConnected = () => useMqttStore((state) => state.isConnected);
-export const useIsLogging = () => useMqttStore((state) => state.isLogging);
+export const useConnectionStatus = () =>
+  useMqttStore((state) => state.connectionStatus);
 export const useLogs = () => useMqttStore((state) => state.logs);
 export const useObjectCounts = () => useMqttStore((state) => state.objectCount);
 export const useTimeZone = () => useMqttStore((state) => state.timezone);

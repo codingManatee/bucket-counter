@@ -6,15 +6,15 @@ import {
   getAllEvents,
   getDayShiftEvents,
   getDayShiftEventsGrouped,
-  getIdleTimeToday,
+  getIdleTime,
   getNightShiftEvents,
   getNightShiftEventsGrouped,
   getTodayShiftEvents,
 } from "@/services/events/eventsApi";
 import { useTimeZone } from "@/stores/useMqttStore";
-import { generateRandomPayload } from "@/utils/helper";
+import { generateRandomPayload } from "@/lib/helper";
 
-export default function ExamplePage() {
+const Page = () => {
   const timezone = useTimeZone();
   return (
     <div className="p-6 mx-auto space-x-2 h-full">
@@ -89,7 +89,7 @@ export default function ExamplePage() {
           className="px-4 py-2 "
           variant="outline"
           onClick={async () => {
-            getIdleTimeToday(timezone);
+            getIdleTime(timezone);
           }}
         >
           get idle time today
@@ -97,4 +97,6 @@ export default function ExamplePage() {
       </div>
     </div>
   );
-}
+};
+
+export default Page;

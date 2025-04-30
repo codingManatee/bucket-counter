@@ -1,4 +1,4 @@
-import { FrigateEvent } from "@/types/FrigateEvent";
+import { FrigateEvent } from "@/types/frigateEvent";
 import { FrigateEventMessage } from "@prisma/client";
 
 export interface EventService {

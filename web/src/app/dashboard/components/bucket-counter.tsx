@@ -6,7 +6,8 @@ import {
 } from "@/services/events/eventsApi";
 import { useTimeZone } from "@/stores/useMqttStore";
 import { useState, useEffect } from "react";
-import { Card, CardContent } from "./ui/card";
+import { Card, CardContent } from "../../../components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const BucketCounter = () => {
   const timezone = useTimeZone();
@@ -36,17 +37,40 @@ const BucketCounter = () => {
     <Card className="">
       <CardContent className="h-full">
         <div className="flex flex-col items-center justify-center h-full">
-          <div className="text-3xl font-bold">{dayCount + nightCount}</div>
+          {isLoading ? (
+            <Skeleton className="w-24 h-8 mb-2" />
+          ) : (
+            <div className="text-3xl font-bold">{dayCount + nightCount}</div>
+          )}
           <div className="text-sm text-muted-foreground">Total Buckets</div>
 
           <div className="w-full grid grid-cols-2 gap-2 mt-3 text-center">
             <div className="bg-amber-100 rounded-md p-2">
-              <div className="text-lg font-medium">{dayCount}</div>
-              <div className="text-xs text-amber-800">Day Shift</div>
+              {isLoading ? (
+                <>
+                  <Skeleton className="w-10 h-6 mx-auto mb-1" />
+                  <Skeleton className="w-16 h-3 mx-auto" />
+                </>
+              ) : (
+                <>
+                  <div className="text-lg font-medium">{dayCount}</div>
+                  <div className="text-xs text-amber-800">Day Shift</div>
+                </>
+              )}
             </div>
+
             <div className="bg-indigo-100 rounded-md p-2">
-              <div className="text-lg font-medium">{nightCount}</div>
-              <div className="text-xs text-indigo-800">Night Shift</div>
+              {isLoading ? (
+                <>
+                  <Skeleton className="w-10 h-6 mx-auto mb-1" />
+                  <Skeleton className="w-16 h-3 mx-auto" />
+                </>
+              ) : (
+                <>
+                  <div className="text-lg font-medium">{nightCount}</div>
+                  <div className="text-xs text-indigo-800">Night Shift</div>
+                </>
+              )}
             </div>
           </div>
         </div>

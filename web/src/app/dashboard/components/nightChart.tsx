@@ -4,7 +4,6 @@ import {
   Bar,
   CartesianGrid,
   ComposedChart,
-  Legend,
   Line,
   ResponsiveContainer,
   Tooltip,
@@ -14,20 +13,14 @@ import {
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
-} from "../ui/card";
+} from "../../../components/ui/card";
 import { useState, useEffect } from "react";
 import { useTimeZone } from "@/stores/useMqttStore";
 import { getNightShiftEventsGrouped } from "@/services/events/eventsApi";
-import { transformGroupedEventsToChartData } from "@/utils/helper";
-
-type chart_data = {
-  time: string;
-  bucketsPerPeriod: number;
-  cumulativeTotal: number;
-}[];
+import { transformGroupedEventsToChartData } from "@/lib/helper";
+import { ChartData } from "@/types/chart";
 
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
@@ -44,8 +37,8 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 };
 
 const NightChart = () => {
-  const [chartData, setChartData] = useState<chart_data>([]);
-  const [totalCount, setTotalCount] = useState<number>(0);
+  const [chartData, setChartData] = useState<ChartData[]>([]);
+
   const timezone = useTimeZone();
 
   useEffect(() => {
@@ -53,7 +46,6 @@ const NightChart = () => {
       const eventGrouped = await getNightShiftEventsGrouped(timezone);
       const data = transformGroupedEventsToChartData(eventGrouped, true);
       setChartData(data);
-      setTotalCount(data.at(-1)?.cumulativeTotal ?? 0);
     };
 
     fetchAndTransform();
