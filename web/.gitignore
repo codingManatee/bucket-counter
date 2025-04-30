@@ -25,7 +25,7 @@
 *.pem
 
 # database
-*.db
+/prisma/log.db
 
 # debug
 npm-debug.log*
