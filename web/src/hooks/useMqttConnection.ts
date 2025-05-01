@@ -4,7 +4,7 @@ import mqtt from "mqtt";
 import {
   useConnectionStatus,
   useMqttActions,
-  useObjectCounts,
+  useMqttStore,
 } from "@/stores/useMqttStore";
 
 import { createEvent } from "@/services/events/eventsApi";
@@ -14,7 +14,6 @@ export const useMqttConnection = (mqttUri: string, topic: string) => {
   const { addLog, incrementObjectCount, setConnectionStatus } =
     useMqttActions();
   const connectionStatus = useConnectionStatus();
-  const objectCount = useObjectCounts();
 
   const connect = useCallback(() => {
     if (connectionStatus === "connected") return;
@@ -49,8 +48,9 @@ export const useMqttConnection = (mqttUri: string, topic: string) => {
             const duration = (
               eventData.after.end_time - eventData.after.start_time
             ).toFixed(2);
+            const count = useMqttStore.getState().objectCount;
             addLog(
-              `Current count: ${objectCount}, Total time unloading: ${duration}s`
+              `Current count: ${count}, Total time unloading: ${duration}s`
             );
           }
           createEvent(eventData);
