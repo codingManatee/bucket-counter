@@ -1,7 +1,20 @@
 import prisma from "@/lib/prisma";
 import { EventService } from "@/interfaces";
 import { FrigateEvent } from "@/types/frigateEvent";
-import { startOfDay, endOfDay } from "date-fns";
+import {
+  startOfDay,
+  addHours,
+  format,
+  getHours,
+  isAfter,
+  isBefore,
+  setHours,
+  subDays,
+  addDays,
+  differenceInSeconds,
+  min as minDate,
+  max as maxDate,
+} from "date-fns";
 
 export const eventService: EventService = {
   async getAllEvents() {
@@ -15,32 +28,27 @@ export const eventService: EventService = {
     const events = await prisma.frigateEventMessage.findMany();
     const now = date ? new Date(date) : new Date();
 
-    const utcNow = new Date(now.getTime() + timezone * 60 * 60 * 1000);
+    const localNow = addHours(now, timezone);
 
-    let startLocal: Date, endLocal: Date;
+    let startLocal: Date;
+    let endLocal: Date;
 
-    if (utcNow.getHours() < 7) {
-      const today = new Date(utcNow);
-      today.setHours(0, 0, 0, 0);
-      const yesterday = new Date(today);
-      yesterday.setDate(yesterday.getDate() - 1);
-
-      startLocal = new Date(yesterday.setHours(7, 0, 0, 0));
-      endLocal = new Date(yesterday.setHours(19, 0, 0, 0));
+    if (getHours(localNow) < 7) {
+      const yesterday = subDays(startOfDay(localNow), 1);
+      startLocal = setHours(yesterday, 7);
+      endLocal = setHours(yesterday, 19);
     } else {
-      const today = new Date(utcNow);
-      today.setHours(0, 0, 0, 0);
-
-      startLocal = new Date(today.setHours(7, 0, 0, 0));
-      endLocal = new Date(today.setHours(19, 0, 0, 0));
+      const today = startOfDay(localNow);
+      startLocal = setHours(today, 7);
+      endLocal = setHours(today, 19);
     }
 
-    const startUTC = new Date(startLocal.getTime() - timezone * 60 * 60 * 1000);
-    const endUTC = new Date(endLocal.getTime() - timezone * 60 * 60 * 1000);
+    const startUTC = addHours(startLocal, -timezone);
+    const endUTC = addHours(endLocal, -timezone);
 
     const filteredEvents = events.filter((event) => {
       const eventDate = new Date(event.startTime);
-      return eventDate >= startUTC && eventDate < endUTC;
+      return isAfter(eventDate, startUTC) && isBefore(eventDate, endUTC);
     });
 
     if (!grouped) return filteredEvents;
@@ -53,11 +61,10 @@ export const eventService: EventService = {
     }
 
     for (const event of filteredEvents) {
-      const date = new Date(event.startTime);
-      let localHour = (date.getUTCHours() + timezone + 24) % 24;
-      let localMinutes = date.getUTCMinutes();
-      const hourStr = localHour.toString().padStart(2, "0");
-      const bucket = localMinutes < 30 ? `${hourStr}:00` : `${hourStr}:30`;
+      const eventDate = addHours(new Date(event.startTime), timezone);
+      const hour = format(eventDate, "HH");
+      const minutes = eventDate.getMinutes();
+      const bucket = minutes < 30 ? `${hour}:00` : `${hour}:30`;
       if (!groupedByHalfHour[bucket]) groupedByHalfHour[bucket] = [];
       groupedByHalfHour[bucket].push(event);
     }
@@ -72,38 +79,35 @@ export const eventService: EventService = {
     const events = await prisma.frigateEventMessage.findMany();
     const now = date ? new Date(date) : new Date();
 
-    const utcNow = new Date(now.getTime() + timezone * 60 * 60 * 1000);
+    const localNow = addHours(now, timezone);
 
-    let startLocal: Date, endLocal: Date;
+    let startLocal: Date;
+    let endLocal: Date;
 
-    if (utcNow.getHours() < 7) {
-      const today = new Date(utcNow);
-      today.setHours(0, 0, 0, 0);
-      const yesterday = new Date(today);
-      yesterday.setDate(yesterday.getDate() - 1);
-
-      startLocal = new Date(yesterday.setHours(19, 0, 0, 0));
-      endLocal = new Date(today.setHours(7, 0, 0, 0));
+    if (getHours(localNow) < 7) {
+      const today = startOfDay(localNow);
+      const yesterday = subDays(today, 1);
+      startLocal = setHours(yesterday, 19);
+      endLocal = setHours(today, 7);
     } else {
-      const today = new Date(utcNow);
-      today.setHours(0, 0, 0, 0);
-      const tomorrow = new Date(today);
-      tomorrow.setDate(tomorrow.getDate() + 1);
-
-      startLocal = new Date(today.setHours(19, 0, 0, 0));
-      endLocal = new Date(tomorrow.setHours(7, 0, 0, 0));
+      const today = startOfDay(localNow);
+      const tomorrow = addDays(today, 1);
+      startLocal = setHours(today, 19);
+      endLocal = setHours(tomorrow, 7);
     }
 
-    const startUTC = new Date(startLocal.getTime() - timezone * 60 * 60 * 1000);
-    const endUTC = new Date(endLocal.getTime() - timezone * 60 * 60 * 1000);
+    const startUTC = addHours(startLocal, -timezone);
+    const endUTC = addHours(endLocal, -timezone);
+
     const filteredEvents = events.filter((event) => {
       const eventDate = new Date(event.startTime);
-
-      return eventDate >= startUTC && eventDate < endUTC;
+      return isAfter(eventDate, startUTC) && isBefore(eventDate, endUTC);
     });
 
     if (!grouped) return filteredEvents;
+
     const groupedByHalfHour: Record<string, typeof filteredEvents> = {};
+
     for (let hour = 19; hour < 24; hour++) {
       groupedByHalfHour[`${hour.toString().padStart(2, "0")}:00`] = [];
       groupedByHalfHour[`${hour.toString().padStart(2, "0")}:30`] = [];
@@ -112,15 +116,16 @@ export const eventService: EventService = {
       groupedByHalfHour[`${hour.toString().padStart(2, "0")}:00`] = [];
       groupedByHalfHour[`${hour.toString().padStart(2, "0")}:30`] = [];
     }
+
     for (const event of filteredEvents) {
-      const date = new Date(event.startTime);
-      let localHour = (date.getUTCHours() + timezone + 24) % 24;
-      let localMinutes = date.getUTCMinutes();
-      const hourStr = localHour.toString().padStart(2, "0");
-      const bucket = localMinutes < 30 ? `${hourStr}:00` : `${hourStr}:30`;
+      const eventDate = addHours(new Date(event.startTime), timezone);
+      const hour = format(eventDate, "HH");
+      const minutes = eventDate.getMinutes();
+      const bucket = minutes < 30 ? `${hour}:00` : `${hour}:30`;
       if (!groupedByHalfHour[bucket]) groupedByHalfHour[bucket] = [];
       groupedByHalfHour[bucket].push(event);
     }
+
     return groupedByHalfHour;
   },
   async createEvents(event: FrigateEvent) {
@@ -167,42 +172,41 @@ export const eventService: EventService = {
     });
   },
   async getIdleTime(timezone: number, date?: string | Date) {
-    const localDate = date ? new Date(date) : new Date();
+    const localNow = addHours(date ? new Date(date) : new Date(), timezone);
 
-    // Shift to local time
-    const localMidnight = new Date(
-      localDate.getTime() + timezone * 60 * 60 * 1000
+    // If before 7 AM local time, use the previous day's 7 AM as the start
+    const isBefore7AM = getHours(localNow) < 7;
+
+    const shiftStartLocal = setHours(
+      isBefore7AM ? subDays(localNow, 1) : localNow,
+      7
     );
+    const shiftEndLocal = addDays(shiftStartLocal, 1);
 
-    // Get local day's start and end in that timezone
-    const localStart = startOfDay(localMidnight);
-    const localEnd = endOfDay(localMidnight);
-
-    // Convert those boundaries back to UTC
-    const utcStart = new Date(localStart.getTime() - timezone * 60 * 60 * 1000);
-    const utcEnd = new Date(localEnd.getTime() - timezone * 60 * 60 * 1000);
+    // Convert shift window back to UTC for querying
+    const shiftStartUTC = addHours(shiftStartLocal, -timezone);
+    const shiftEndUTC = addHours(shiftEndLocal, -timezone);
 
     const events = await prisma.frigateEventMessage.findMany({
       where: {
         AND: [
-          { startTime: { lt: utcEnd.toISOString() } }, // events started before day ends
-          { endTime: { gt: utcStart.toISOString() } }, // events ended after day starts
+          { startTime: { lt: shiftEndUTC.toISOString() } },
+          { endTime: { gt: shiftStartUTC.toISOString() } },
         ],
       },
       orderBy: { startTime: "asc" },
     });
 
-    // Compute total duration
+    // Compute total active duration in the window
     const totalUsedSeconds = events.reduce((sum, event) => {
       const start = new Date(event.startTime);
       const end = new Date(event.endTime);
 
-      // Clip to within current day
-      const clippedStart = start < utcStart ? utcStart : start;
-      const clippedEnd = end > utcEnd ? utcEnd : end;
+      const clippedStart = maxDate([start, shiftStartUTC]);
+      const clippedEnd = minDate([end, shiftEndUTC]);
 
-      const duration = (clippedEnd.getTime() - clippedStart.getTime()) / 1000;
-      return sum + duration;
+      const duration = differenceInSeconds(clippedEnd, clippedStart);
+      return sum + Math.max(0, duration);
     }, 0);
 
     const idleSeconds = 86400 - totalUsedSeconds;

@@ -1,4 +1,5 @@
-import { ChartData, FrigateEvent } from "@/types/frigateEvent";
+import { ChartData } from "@/types/chart";
+import { FrigateEvent } from "@/types/frigateEvent";
 import { FrigateEventMessage } from "@prisma/client";
 
 function sortTimeBuckets(times: string[], isNightShift = false): string[] {
