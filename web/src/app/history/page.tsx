@@ -26,6 +26,7 @@ import {
   getIdleTime,
 } from "@/services/events/eventsApi";
 import { useTimeZone } from "@/stores/useMqttStore";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type BucketData = {
   date: string;
@@ -47,10 +48,14 @@ const formatIdleTime = (seconds: number): string => {
 const Page = () => {
   const [date, setDate] = useState<Date>(new Date());
   const [bucketData, setBucketData] = useState<BucketData[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   const timezone = useTimeZone();
 
-  const handleExport = (data: BucketData[], filename = "bucket-report.csv") => {
+  const handleExport = (
+    data: BucketData[],
+    filename = `bucket-report-${format(date, "yyyy-MM")}.csv`
+  ) => {
     const headers = Object.keys(data[0]).join(",");
     const rows = data.map((row) =>
       Object.values(row)
@@ -80,6 +85,7 @@ const Page = () => {
         const dateStr = format(currentDate, "yyyy-MM-dd");
 
         try {
+          setIsLoading(true);
           const [dayShift, nightShift, idle] = await Promise.all([
             getDayShiftEvents(timezone, dateStr),
             getNightShiftEvents(timezone, dateStr),
@@ -95,6 +101,8 @@ const Page = () => {
           });
         } catch (err) {
           console.error("Failed on", dateStr, err);
+        } finally {
+          setIsLoading(false);
         }
       }
 
@@ -142,7 +150,9 @@ const Page = () => {
               <Button
                 variant="outline"
                 onClick={() => {
-                  handleExport(bucketData);
+                  if (!isLoading) {
+                    handleExport(bucketData);
+                  }
                 }}
                 className="gap-2"
               >
@@ -176,23 +186,47 @@ const Page = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {bucketData.map((row) => (
-                  <TableRow key={row.date}>
-                    <TableCell className="font-medium">
-                      {format(new Date(row.date), "yyyy-MM-dd")}
-                    </TableCell>
-                    <TableCell className="text-center">
-                      {row.dayShift}
-                    </TableCell>
-                    <TableCell className="text-center">
-                      {row.nightShift}
-                    </TableCell>
-                    <TableCell className="text-center font-medium">
-                      {row.total}
-                    </TableCell>
-                    <TableCell className="text-right">{row.idleTime}</TableCell>
-                  </TableRow>
-                ))}
+                {isLoading
+                  ? Array(30) // Adjust this number based on how many rows you want to show as skeletons
+                      .fill(0)
+                      .map((_, index) => (
+                        <TableRow key={index}>
+                          <TableCell className="font-medium">
+                            <Skeleton className="h-4 w-24" />
+                          </TableCell>
+                          <TableCell className="text-center">
+                            <Skeleton className="h-4 w-12" />
+                          </TableCell>
+                          <TableCell className="text-center">
+                            <Skeleton className="h-4 w-12" />
+                          </TableCell>
+                          <TableCell className="text-center font-medium">
+                            <Skeleton className="h-4 w-16" />
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <Skeleton className="h-4 w-20" />
+                          </TableCell>
+                        </TableRow>
+                      ))
+                  : bucketData.map((row) => (
+                      <TableRow key={row.date}>
+                        <TableCell className="font-medium">
+                          {format(new Date(row.date), "yyyy-MM-dd")}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          {row.dayShift}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          {row.nightShift}
+                        </TableCell>
+                        <TableCell className="text-center font-medium">
+                          {row.total}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {row.idleTime}
+                        </TableCell>
+                      </TableRow>
+                    ))}
               </TableBody>
             </Table>
           </div>
