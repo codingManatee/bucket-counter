@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
 import { EventService } from "@/interfaces";
-import { FrigateEvent } from "@/types/frigateEvent";
+import { FrigateEvent } from "@/types/What";
 import {
   startOfDay,
   addHours,
