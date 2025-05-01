@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
 import { EventService } from "@/interfaces";
-import { FrigateEvent } from "@/types/What";
+
 import {
   startOfDay,
   addHours,
@@ -15,6 +15,7 @@ import {
   min as minDate,
   max as maxDate,
 } from "date-fns";
+import { FrigateEvent } from "@/types/frigateEvent";
 
 export const eventService: EventService = {
   async getAllEvents() {

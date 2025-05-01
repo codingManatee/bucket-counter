@@ -6,8 +6,9 @@ import {
   useMqttActions,
   useObjectCounts,
 } from "@/stores/useMqttStore";
-import { FrigateEvent } from "@/types/What";
+
 import { createEvent } from "@/services/events/eventsApi";
+import { FrigateEvent } from "@/types/frigateEvent";
 
 export const useMqttConnection = (mqttUri: string, topic: string) => {
   const { addLog, incrementObjectCount, setConnectionStatus } =
