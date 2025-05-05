@@ -4,15 +4,25 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useMqttConnection } from "@/hooks/useMqttConnection";
 import {
   useConnectionStatus,
+  useLoggingStatus,
   useLogs,
   useMqttActions,
   useObjectCounts,
 } from "@/stores/useMqttStore";
+import { ConnectionStatus, LoggingStatus } from "@/types/mqttStore";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
-import { ChartNoAxesCombined, RotateCcw, ScrollText, Wifi } from "lucide-react";
+import {
+  ChartNoAxesCombined,
+  Play,
+  RotateCcw,
+  ScrollText,
+  Square,
+  Wifi,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
-const statusStyles = {
+const statusStyles: Record<ConnectionStatus, string> = {
   connected:
     "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 hover:bg-green-200",
   reconnecting:
@@ -21,16 +31,29 @@ const statusStyles = {
     "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 hover:bg-red-200",
 };
 
+const loggingStyles: Record<LoggingStatus, string> = {
+  hault: "bg-green-500 hover:bg-green-600",
+  logging: "bg-red-400 hover:bg-red-500",
+};
+
 const Page = () => {
   const logs = useLogs();
   const router = useRouter();
-
+  const loggingStatus = useLoggingStatus();
   const connectionStatus = useConnectionStatus();
   const objectCount = useObjectCounts();
-  const { resetCounter, addLog, resetLog } = useMqttActions();
+  const { resetCounter, addLog, resetLog, setLoggingStatus } = useMqttActions();
 
   // Connect to MQTT
   useMqttConnection("ws://localhost:9001", "frigate/reviews");
+
+  const toggleLoggingStatus = () => {
+    setLoggingStatus(loggingStatus === "logging" ? "hault" : "logging");
+  };
+
+  useEffect(() => {
+    console.log(loggingStatus);
+  }, []);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 max-h-full overflow-auto">
@@ -76,14 +99,20 @@ const Page = () => {
             </div>
           </CardHeader>
           <CardContent>
-            <ScrollArea className="overflow-scroll h-[calc(100vh-200px)] rounded-md border p-4 bg-slate-100 dark:bg-slate-800 font-mono text-sm">
-              {logs.length > 0 ? (
-                logs.map((log, index) => (
-                  <div key={index} className="pb-1">
+            <ScrollArea
+              className="overflow-scroll h-[calc(100vh-200px)] rounded-md border p-4 
+                 bg-slate-100 dark:bg-slate-800 font-mono text-sm"
+            >
+              {loggingStatus === "hault" ? (
+                <div className="space-y-2"> -- LOGGING HAULTED -- </div>
+              ) : logs.length > 0 ? (
+                logs.map((log, idx) => (
+                  <div key={idx} className="pb-1">
                     {log}
                   </div>
                 ))
               ) : (
+                // empty-state message when "logging" but no entries yet
                 <div className="text-muted-foreground italic">
                   No log entries yet. Connect the system and press Start to
                   begin logging.
@@ -112,11 +141,8 @@ const Page = () => {
             </Button>
           </CardContent>
         </Card>
-        <Card className="flex flex-1">
-          <CardHeader className=" flex flex-row items-center justify-between">
-            <CardTitle>Status</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6 ">
+        <Card className="flex-1">
+          <CardContent className="space-y-6 h-full flex flex-1 flex-col justify-between">
             <div className="text-center">
               <div className="text-sm font-medium mb-1">COUNTER</div>
               <div className="text-6xl font-bold text-blue-600">
@@ -127,12 +153,29 @@ const Page = () => {
                 size="sm"
                 className="mt-2"
                 onClick={() => {
-                  addLog("Counter reset to 0");
+                  addLog("Reset current shift to 0");
                   resetCounter();
                 }}
               >
                 <RotateCcw size={14} className="mr-1" />
-                Reset
+                Reset Shift
+              </Button>
+            </div>
+            <div className="">
+              <Button
+                className={`w-full ${loggingStyles[loggingStatus]}`}
+                onClick={toggleLoggingStatus}
+              >
+                {loggingStatus === "logging" ? (
+                  <>
+                    <Square size={16} className="mr-1.5" /> Stop
+                  </>
+                ) : (
+                  <>
+                    <Play size={16} className="mr-1.5" />
+                    Start
+                  </>
+                )}
               </Button>
             </div>
           </CardContent>

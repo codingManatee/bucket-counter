@@ -25,7 +25,6 @@ export const useMqttConnection = (mqttUri: string, topic: string) => {
     });
 
     client.on("connect", () => {
-      // addLog("System connected - Connected to MQTT");
       setConnectionStatus("connected");
       client.subscribe(topic);
     });
@@ -33,8 +32,13 @@ export const useMqttConnection = (mqttUri: string, topic: string) => {
     client.on("message", (_topic, msg) => {
       const raw = msg.toString();
 
+      const loggingStatus = useMqttStore.getState().loggingStatus;
+      if (loggingStatus === "hault") return;
+
       try {
         const eventData: FrigateEvent = JSON.parse(raw);
+
+        if (eventData.before.severity !== "alert") return;
 
         if (eventData.type === "new") {
           incrementObjectCount();

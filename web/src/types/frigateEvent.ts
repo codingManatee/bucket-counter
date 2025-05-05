@@ -1,5 +1,5 @@
 export type FrigateEventType = "new" | "update" | "end";
-
+export type FrigateSeverity = "detection" | "alert";
 export type FrigateEvent = {
   type: FrigateEventType;
   before: FrigateReview;
@@ -11,7 +11,7 @@ export type FrigateReview = {
   camera: string;
   start_time: number;
   end_time: number | null;
-  severity: string;
+  severity: FrigateSeverity;
   thumb_path: string;
   data: {
     detections: string[];

@@ -17,6 +17,11 @@ import {
 } from "date-fns";
 import { FrigateEvent } from "@/types/frigateEvent";
 
+const SHIFT_CONFIG = {
+  start: 8,
+  end: 20,
+};
+
 export const eventService: EventService = {
   async getAllEvents() {
     return prisma.frigateEventMessage.findMany();
@@ -34,14 +39,14 @@ export const eventService: EventService = {
     let startLocal: Date;
     let endLocal: Date;
 
-    if (getHours(localNow) < 7) {
+    if (getHours(localNow) < SHIFT_CONFIG.start) {
       const yesterday = subDays(startOfDay(localNow), 1);
-      startLocal = setHours(yesterday, 7);
-      endLocal = setHours(yesterday, 19);
+      startLocal = setHours(yesterday, SHIFT_CONFIG.start);
+      endLocal = setHours(yesterday, SHIFT_CONFIG.end);
     } else {
       const today = startOfDay(localNow);
-      startLocal = setHours(today, 7);
-      endLocal = setHours(today, 19);
+      startLocal = setHours(today, SHIFT_CONFIG.start);
+      endLocal = setHours(today, SHIFT_CONFIG.end);
     }
 
     const startUTC = addHours(startLocal, -timezone);
@@ -56,7 +61,7 @@ export const eventService: EventService = {
 
     const groupedByHalfHour: Record<string, typeof filteredEvents> = {};
 
-    for (let hour = 7; hour < 19; hour++) {
+    for (let hour = SHIFT_CONFIG.start; hour < SHIFT_CONFIG.end; hour++) {
       groupedByHalfHour[`${hour.toString().padStart(2, "0")}:00`] = [];
       groupedByHalfHour[`${hour.toString().padStart(2, "0")}:30`] = [];
     }
@@ -85,16 +90,16 @@ export const eventService: EventService = {
     let startLocal: Date;
     let endLocal: Date;
 
-    if (getHours(localNow) < 7) {
+    if (getHours(localNow) < SHIFT_CONFIG.start) {
       const today = startOfDay(localNow);
       const yesterday = subDays(today, 1);
-      startLocal = setHours(yesterday, 19);
-      endLocal = setHours(today, 7);
+      startLocal = setHours(yesterday, SHIFT_CONFIG.end);
+      endLocal = setHours(today, SHIFT_CONFIG.start);
     } else {
       const today = startOfDay(localNow);
       const tomorrow = addDays(today, 1);
-      startLocal = setHours(today, 19);
-      endLocal = setHours(tomorrow, 7);
+      startLocal = setHours(today, SHIFT_CONFIG.end);
+      endLocal = setHours(tomorrow, SHIFT_CONFIG.start);
     }
 
     const startUTC = addHours(startLocal, -timezone);
@@ -109,11 +114,11 @@ export const eventService: EventService = {
 
     const groupedByHalfHour: Record<string, typeof filteredEvents> = {};
 
-    for (let hour = 19; hour < 24; hour++) {
+    for (let hour = SHIFT_CONFIG.end; hour < 24; hour++) {
       groupedByHalfHour[`${hour.toString().padStart(2, "0")}:00`] = [];
       groupedByHalfHour[`${hour.toString().padStart(2, "0")}:30`] = [];
     }
-    for (let hour = 0; hour < 7; hour++) {
+    for (let hour = 0; hour < SHIFT_CONFIG.start; hour++) {
       groupedByHalfHour[`${hour.toString().padStart(2, "0")}:00`] = [];
       groupedByHalfHour[`${hour.toString().padStart(2, "0")}:30`] = [];
     }
@@ -176,7 +181,7 @@ export const eventService: EventService = {
     const localNow = addHours(date ? new Date(date) : new Date(), timezone);
 
     // If before 7 AM local time, use the previous day's 7 AM as the start
-    const isBefore7AM = getHours(localNow) < 7;
+    const isBefore7AM = getHours(localNow) < SHIFT_CONFIG.start;
 
     const shiftStartLocal = setHours(
       isBefore7AM ? subDays(localNow, 1) : localNow,

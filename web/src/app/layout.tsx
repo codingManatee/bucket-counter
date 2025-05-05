@@ -2,6 +2,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./global.css";
 import { Metadata } from "next";
 import Header from "@/components/layout/header";
+import ClientShiftReset from "@/components/layout/ClientShiftReset";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,6 +28,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col h-screen h-max-screen overflow-hidden`}
       >
+        <ClientShiftReset />
         <Header />
         <main className="flex-1 bg-gray-100 overflow-hidden ">{children}</main>
       </body>
