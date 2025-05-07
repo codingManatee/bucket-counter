@@ -1,11 +1,10 @@
 import { ChartData } from "@/types/chart";
-import { FrigateEvent } from "@/types/frigateEvent";
+import { FrigateEvent, FrigateSeverity } from "@/types/frigateEvent";
 
 import { FrigateEventMessage } from "@prisma/client";
 
 function sortTimeBuckets(times: string[], isNightShift = false): string[] {
   if (!isNightShift) {
-    // Regular chronological sort
     return times.sort((a, b) => {
       const [ah, am] = a.split(":").map(Number);
       const [bh, bm] = b.split(":").map(Number);
@@ -13,13 +12,12 @@ function sortTimeBuckets(times: string[], isNightShift = false): string[] {
     });
   }
 
-  // Night shift custom order: 19:00 → 23:30, then 00:00 → 06:30
   return times.sort((a, b) => {
     const toNightIndex = (time: string) => {
       const [hour, min] = time.split(":").map(Number);
       let index = hour * 2 + (min >= 30 ? 1 : 0);
-      // Shift 0-6:30 to be after 19-23:30
-      if (hour < 7) index += 48; // 48 buckets = 24 hours * 2
+
+      if (hour < 7) index += 48;
       return index;
     };
     return toNightIndex(a) - toNightIndex(b);
@@ -41,7 +39,7 @@ export function generateRandomPayload(): FrigateEvent {
     Math.random().toFixed(6).split(".")[1]
   }-${getRandomString()}`;
   const camera = getRandomItem(["main_cam", "garage", "driveway"]);
-  const severity = getRandomItem(["info", "alert", "critical"]);
+  const severity = getRandomItem<FrigateSeverity>(["detection", "alert"]);
 
   return {
     type: "end",
