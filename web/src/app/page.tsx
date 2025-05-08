@@ -2,12 +2,14 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useMqttConnection } from "@/hooks/useMqttConnection";
+import { resetCurrentShift } from "@/services/events/eventsApi";
 import {
   useConnectionStatus,
   useLoggingStatus,
   useLogs,
   useMqttActions,
   useObjectCounts,
+  useTimeZone,
 } from "@/stores/useMqttStore";
 import { ConnectionStatus, LoggingStatus } from "@/types/mqttStore";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
@@ -41,6 +43,8 @@ const Page = () => {
   const loggingStatus = useLoggingStatus();
   const connectionStatus = useConnectionStatus();
   const objectCount = useObjectCounts();
+  const timezone = useTimeZone();
+
   const { resetCounter, addLog, resetLog, setLoggingStatus } = useMqttActions();
 
   useMqttConnection("frigate/reviews");
@@ -146,9 +150,10 @@ const Page = () => {
                 variant="ghost"
                 size="sm"
                 className="mt-2"
-                onClick={() => {
+                onClick={async () => {
                   addLog("Reset current shift to 0");
                   resetCounter();
+                  resetCurrentShift(timezone);
                 }}
               >
                 <RotateCcw size={14} className="mr-1" />

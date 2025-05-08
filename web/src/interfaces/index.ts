@@ -17,4 +17,8 @@ export interface EventService {
     event: FrigateEvent
   ) => Promise<FrigateEventMessage | undefined>;
   getIdleTime: (timezone: number, date?: Date | string) => Promise<number>;
+  resetCurrentShift: (
+    timezone: number,
+    date?: string | Date
+  ) => Promise<number>;
 }

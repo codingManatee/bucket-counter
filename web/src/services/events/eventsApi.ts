@@ -48,3 +48,15 @@ export const getIdleTime = (timezone: number, date?: string) =>
   apiFetch<number>(
     `/api/events/idle-time?timezone=${timezone}` + (date ? `&date=${date}` : "")
   );
+
+export const resetCurrentShift = (timezone: number, date?: string) =>
+  apiFetch<number>(
+    `/api/events/reset-shift?timezone=${timezone}` +
+      (date ? `&date=${date}` : ""),
+    {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );

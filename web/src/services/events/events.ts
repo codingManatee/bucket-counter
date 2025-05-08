@@ -180,16 +180,14 @@ export const eventService: EventService = {
   async getIdleTime(timezone: number, date?: string | Date) {
     const localNow = addHours(date ? new Date(date) : new Date(), timezone);
 
-    // If before 7 AM local time, use the previous day's 7 AM as the start
-    const isBefore7AM = getHours(localNow) < SHIFT_CONFIG.start;
+    const isBeforeShiftStart = getHours(localNow) < SHIFT_CONFIG.start;
 
     const shiftStartLocal = setHours(
-      isBefore7AM ? subDays(localNow, 1) : localNow,
-      7
+      isBeforeShiftStart ? subDays(localNow, 1) : localNow,
+      SHIFT_CONFIG.start
     );
     const shiftEndLocal = addDays(shiftStartLocal, 1);
 
-    // Convert shift window back to UTC for querying
     const shiftStartUTC = addHours(shiftStartLocal, -timezone);
     const shiftEndUTC = addHours(shiftEndLocal, -timezone);
 
@@ -203,7 +201,6 @@ export const eventService: EventService = {
       orderBy: { startTime: "asc" },
     });
 
-    // Compute total active duration in the window
     const totalUsedSeconds = events.reduce((sum, event) => {
       const start = new Date(event.startTime);
       const end = new Date(event.endTime);
@@ -217,5 +214,47 @@ export const eventService: EventService = {
 
     const idleSeconds = 86400 - totalUsedSeconds;
     return Math.max(0, Math.round(idleSeconds));
+  },
+  async resetCurrentShift(timezone: number, date?: string | Date) {
+    // 1 — figure out "now" in the plant’s local time
+    const localNow = addHours(date ? new Date(date) : new Date(), timezone);
+    const hour = getHours(localNow);
+
+    let shiftStartLocal: Date;
+    let shiftEndLocal: Date;
+
+    if (hour >= SHIFT_CONFIG.start && hour < SHIFT_CONFIG.end) {
+      // DAY shift (08 – 20 local)
+      const today = startOfDay(localNow);
+      shiftStartLocal = setHours(today, SHIFT_CONFIG.start); // 08:00 today
+      shiftEndLocal = setHours(today, SHIFT_CONFIG.end); // 20:00 today
+    } else if (hour >= SHIFT_CONFIG.end) {
+      // NIGHT shift, first half (20 – 24 local)
+      const today = startOfDay(localNow);
+      shiftStartLocal = setHours(today, SHIFT_CONFIG.end); // 20:00 today
+      shiftEndLocal = addDays(today, 1); // 00:00 tomorrow
+    } else {
+      // NIGHT shift, second half (00 – 08 local)
+      const today = startOfDay(localNow);
+      const yesterday = subDays(today, 1);
+      shiftStartLocal = setHours(yesterday, SHIFT_CONFIG.end); // 20:00 yesterday
+      shiftEndLocal = setHours(today, SHIFT_CONFIG.start); // 08:00 today
+    }
+
+    // 2 — convert to UTC
+    const shiftStartUTC = addHours(shiftStartLocal, -timezone);
+    const shiftEndUTC = addHours(shiftEndLocal, -timezone);
+
+    // 3 — delete everything whose *start* falls inside the current shift
+    const { count } = await prisma.frigateEventMessage.deleteMany({
+      where: {
+        startTime: {
+          gte: shiftStartUTC.toISOString(),
+          lt: shiftEndUTC.toISOString(),
+        },
+      },
+    });
+
+    return count; // optional: return how many rows were purged
   },
 };
