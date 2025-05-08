@@ -1,0 +1,61 @@
+{
+  "Setting": { 
+    "title": "Settings",
+    "description": "Configure your Bucket Logger preferences",
+    "timezone": "Timezone",
+    "timezone_helper": "Timestamps will be displayed in the selected timezone",
+    "language": "Language",
+    "language_helper": "Select interface language"
+  },
+  "HomePage": {
+    "logOutput": "Log Output",
+    "history": "History",
+    "dashboard": "Dashboard",
+    "clear": "Clear",
+    "noLogs": "No log entries yet. Connect the system and press Start to begin logging.",
+    "loggingHaulted": "-- LOGGING HAULTED --",
+    "connection": "Connection",
+    "counter": "COUNTER",
+    "resetShift": "Reset Shift",
+    "start": "Start",
+    "stop": "Stop",
+    "connected": "Connected",
+    "disconnected": "Disconnected",
+    "reconnecting": "Reconnecting"
+  },
+  "DashboardPage": {
+    "header": "Dashboard",
+    "returnToLog": "Return to Log",
+    "totalBuckets": "Total Buckets",
+    "dayShift": "Day Shift",
+    "nightShift": "Night Shift",
+    "dayChartTitle": "Day Shift Unloading Chart",
+    "nightChartTitle": "Night Shift Unloading Chart",
+    "xAxisLabel": "Time (HH:MM)",
+    "yAxisLabel": "Number of Buckets",
+    "bucketsPerPeriod": "Buckets per 30 min",
+    "cumulativeTotal": "Cumulative total",
+    "tooltipTime": "Time",
+    "tooltipBuckets": "Buckets in period",
+    "tooltipCumulative": "Cumulative total"
+  },
+  "HistoryPage": {
+    "title": "Bucket Unloading History",
+    "subtitle": "{month} • Shift and bucket statistics",
+    "export": "Export",
+    "returnToLog": "Return to Log",
+    "date": "Date",
+    "dayShift": "Day Shift",
+    "nightShift": "Night Shift",
+    "totalBuckets": "Total Buckets",
+    "idleTime": "Idle Time",
+    "pickMonth": "Pick a month"
+  },
+  "Header": {
+    "appName": "Bucket Logger",
+    "temperatureUnit": "°C",
+    "statusConnected": "Connected",
+    "statusReconnecting": "Reconnecting",
+    "statusDisconnected": "Disconnected"
+  }
+}

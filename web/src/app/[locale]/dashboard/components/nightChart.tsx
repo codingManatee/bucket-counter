@@ -15,20 +15,26 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "../../../components/ui/card";
+} from "../../../../components/ui/card";
 import { useState, useEffect } from "react";
 import { useTimeZone } from "@/stores/useMqttStore";
 import { getNightShiftEventsGrouped } from "@/services/events/eventsApi";
 import { transformGroupedEventsToChartData } from "@/lib/helper";
 import { ChartData } from "@/types/chart";
+import { useTranslations } from "next-intl";
 
 const CustomTooltip = ({ active, payload, label }: any) => {
+  const t = useTranslations("DashboardPage");
   if (active && payload && payload.length) {
     return (
       <div className="bg-white p-3 border border-gray-200 rounded-md shadow-sm">
-        <p className="font-medium">{`Time: ${label}`}</p>
-        <p className="text-sm text-green-700">{`Buckets in period: ${payload[0].value}`}</p>
-        <p className="text-sm text-blue-700">{`Cumulative total: ${payload[1].value}`}</p>
+        <p className="font-medium">{`${t("tooltipTime")}: ${label}`}</p>
+        <p className="text-sm text-green-700">{`${t("tooltipBuckets")}: ${
+          payload[0].value
+        }`}</p>
+        <p className="text-sm text-blue-700">{`${t("tooltipCumulative")}: ${
+          payload[1].value
+        }`}</p>
       </div>
     );
   }
@@ -37,8 +43,8 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 };
 
 const NightChart = () => {
+  const t = useTranslations("DashboardPage");
   const [chartData, setChartData] = useState<ChartData[]>([]);
-
   const timezone = useTimeZone();
 
   useEffect(() => {
@@ -55,7 +61,7 @@ const NightChart = () => {
     <Card className="h-full py-1">
       <CardHeader>
         <CardTitle className="text-center text-md md:text-xl">
-          Night Shift Unloading Chart
+          {t("nightChartTitle")}
         </CardTitle>
       </CardHeader>
       <CardContent className="h-full">
@@ -74,7 +80,7 @@ const NightChart = () => {
               <XAxis
                 dataKey="time"
                 label={{
-                  value: "Time (HH:MM)",
+                  value: t("xAxisLabel"),
                   position: "insideBottom",
                 }}
                 tick={{ fontSize: 12 }}
@@ -82,7 +88,7 @@ const NightChart = () => {
               />
               <YAxis
                 label={{
-                  value: "Number of Buckets",
+                  value: t("yAxisLabel"),
                   angle: -90,
                   position: "insideLeft",
                 }}
@@ -92,14 +98,14 @@ const NightChart = () => {
               <Tooltip content={<CustomTooltip />} />
               <Bar
                 dataKey="bucketsPerPeriod"
-                name="Buckets per 30 min"
+                name={t("bucketsPerPeriod")}
                 fill="#16a34a"
                 barSize={20}
               />
               <Line
                 type="monotone"
                 dataKey="cumulativeTotal"
-                name="Cumulative total"
+                name={t("cumulativeTotal")}
                 stroke="#2563eb"
                 strokeWidth={2}
                 dot={{ r: 4, strokeWidth: 2 }}

@@ -12,10 +12,22 @@ import {
 } from "@/components/ui/sheet";
 import { Label } from "@/components/ui/label";
 import { useMqttActions, useTimeZone } from "@/stores/useMqttStore";
+import { useTranslations } from "next-intl";
+import { usePathname, useRouter } from "next/navigation";
 
 export default function SettingsButton() {
-  const { setTimeZone } = useMqttActions();
+  const { setTimeZone, setLocale } = useMqttActions();
   const timezone = useTimeZone();
+  const t = useTranslations("Setting");
+  const router = useRouter();
+  const path = usePathname();
+  const current = path.split("/")[1] || "en";
+
+  const changeLocale = (next: "en" | "ru") => {
+    const withoutLocale = path.replace(/^\/(en|ru)/, "");
+    router.push(`/${next}${withoutLocale}`);
+    setLocale(next);
+  };
 
   return (
     <Sheet>
@@ -31,14 +43,12 @@ export default function SettingsButton() {
       </SheetTrigger>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>Settings</SheetTitle>
-          <SheetDescription>
-            Configure your Bucket Logger preferences
-          </SheetDescription>
+          <SheetTitle>{t("title")}</SheetTitle>
+          <SheetDescription>{t("description")}</SheetDescription>
         </SheetHeader>
         <div className="py-6 space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="timezone">Timezone</Label>
+            <Label htmlFor="timezone">{t("timezone")}</Label>
             <select
               id="timezone"
               value={timezone ?? ""}
@@ -74,7 +84,22 @@ export default function SettingsButton() {
             </select>
 
             <p className="text-xs text-muted-foreground mt-1">
-              Timestamps will be displayed in the selected timezone
+              {t("timezone_helper")}
+            </p>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="locale">{t("language")}</Label>
+            <select
+              id="locale"
+              value={current}
+              onChange={(e) => changeLocale(e.target.value as "en" | "ru")}
+              className="w-full rounded-md border bg-background px-3 py-2"
+            >
+              <option value="en">English</option>
+              <option value="ru">Русский</option>
+            </select>
+            <p className="text-xs text-muted-foreground mt-1">
+              {t("language_helper")}
             </p>
           </div>
         </div>

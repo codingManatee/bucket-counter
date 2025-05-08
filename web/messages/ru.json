@@ -1,0 +1,63 @@
+{
+  "Setting": { 
+    "title": "Настройки",
+    "description": "Конфигурируйте Bucket Logger",
+    "timezone": "Часовой пояс",
+    "timezone_helper": "Отметки времени будут отображаться в выбранном часовом поясе",
+    "language": "Язык",
+    "language_helper": "Выберите язык интерфейса"
+  },
+  "HomePage": {
+    "logOutput": "Вывод журнала",
+    "history": "История",
+    "dashboard": "Панель",
+    "clear": "Очистить",
+    "noLogs": "Записей ещё нет. Подключитесь и нажмите «Старт» для начала логирования.",
+    "loggingHaulted": "-- ЛОГИРОВАНИЕ ПРИОСТАНОВЛЕНО --",
+    "connection": "Соединение",
+    "counter": "СЧЁТЧИК",
+    "resetShift": "Сброс смены",
+    "start": "Старт",
+    "stop": "Стоп",
+    "connected": "Подключено",
+    "disconnected": "Отключено",
+    "reconnecting": "Повторное подключение"
+  },
+  "DashboardPage": {
+    "header": "Панель управления",
+    "returnToLog": "Вернуться к журналу",
+    "totalBuckets": "Всего ведер",
+    "dayShift": "Дневная смена",
+    "nightShift": "Ночная смена",
+    "dayChartTitle": "График разгрузки дневной смены",
+    "nightChartTitle": "График разгрузки ночной смены",
+    "xAxisLabel": "Время (ЧЧ:ММ)",
+    "yAxisLabel": "Количество ведер",
+    "bucketsPerPeriod": "Ведер за 30 мин",
+    "cumulativeTotal": "Накопительный итог",
+    "tooltipTime": "Время",
+    "tooltipBuckets": "Ведер в период",
+    "tooltipCumulative": "Накопительный итог"
+  },
+  "HistoryPage": {
+    "title": "История разгрузки ведер",
+    "subtitle": "{month} • Статистика смен и ведер",
+    "export": "Экспорт",
+    "returnToLog": "Вернуться к журналу",
+    "date": "Дата",
+    "dayShift": "Дневная смена",
+    "nightShift": "Ночная смена",
+    "totalBuckets": "Всего ведер",
+    "idleTime": "Время простоя",
+    "pickMonth": "Выберите месяц"
+  },
+  "Header": {
+    "appName": "Bucket Logger",
+    "temperatureUnit": "°C",
+    "statusConnected": "Подключено",
+    "statusReconnecting": "Повторное подключение",
+    "statusDisconnected": "Отключено"
+  }
+}
+
+  

@@ -3,6 +3,8 @@ import { ConnectionStatus, LoggingStatus } from "@/types/mqttStore";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
+type Locale = "en" | "ru";
+
 interface MqttStore {
   objectCount: number;
   connectionStatus: ConnectionStatus;
@@ -11,6 +13,7 @@ interface MqttStore {
   timezone: number;
   selectedDay: Date;
   selectedShiftDisplay: ShiftDisplay;
+  locale: Locale;
   actions: {
     incrementObjectCount: () => void;
     setConnectionStatus: (status: ConnectionStatus) => void;
@@ -20,6 +23,7 @@ interface MqttStore {
     resetCounter: () => void;
     setTimeZone: (timezone: number) => void;
     setSelectedShiftDisplay: (shift: ShiftDisplay) => void;
+    setLocale: (locale: Locale) => void;
   };
 }
 
@@ -33,6 +37,11 @@ const useMqttStore = create<MqttStore>()(
       timezone: 0,
       selectedDay: new Date(),
       selectedShiftDisplay: ShiftDisplay.DAY,
+      locale: (typeof navigator !== "undefined"
+        ? navigator.language.startsWith("ru")
+          ? "ru"
+          : "en"
+        : "en") as Locale,
       actions: {
         incrementObjectCount: () =>
           set((state) => ({ objectCount: state.objectCount + 1 })),
@@ -59,6 +68,7 @@ const useMqttStore = create<MqttStore>()(
 
         setSelectedShiftDisplay: (shift) =>
           set({ selectedShiftDisplay: shift }),
+        setLocale: (locale: Locale) => set({ locale }),
       },
     }),
     {
