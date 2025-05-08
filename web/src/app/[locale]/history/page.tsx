@@ -1,4 +1,6 @@
 "use client";
+
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { CalendarIcon, ChevronLeft, Download } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -46,6 +48,7 @@ const formatIdleTime = (seconds: number): string => {
 };
 
 const Page = () => {
+  const t = useTranslations("HistoryPage");
   const [date, setDate] = useState<Date>(new Date());
   const [bucketData, setBucketData] = useState<BucketData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -63,7 +66,6 @@ const Page = () => {
         .join(",")
     );
     const csvContent = [headers, ...rows].join("\n");
-
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
@@ -118,35 +120,31 @@ const Page = () => {
         <CardHeader className="pb-0">
           <div className="flex items-center justify-between">
             <div className="space-y-1">
-              <CardTitle className="text-3xl font-bold">
-                Bucket Unloading History
-              </CardTitle>
+              <CardTitle className="text-3xl font-bold">{t("title")}</CardTitle>
               <p className="text-muted-foreground">
-                {format(date, "MMMM yyyy")} • Shift and bucket statistics
+                {t("subtitle", { month: format(date, "MMMM yyyy") })}
               </p>
             </div>
+
             <div className="flex flex-col md:flex-row items-center gap-2">
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
-                    variant={"outline"}
+                    variant="outline"
                     className={cn(
-                      " justify-start text-left font-normal",
+                      "justify-start text-left font-normal",
                       !date && "text-muted-foreground"
                     )}
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
-                    {date ? (
-                      format(date, "MMM yyyy")
-                    ) : (
-                      <span>Pick a month</span>
-                    )}
+                    {date ? format(date, "MMM yyyy") : t("pickMonth")}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0">
                   <MonthPicker onMonthSelect={setDate} selectedMonth={date} />
                 </PopoverContent>
               </Popover>
+
               <Button
                 variant="outline"
                 onClick={() => {
@@ -157,60 +155,64 @@ const Page = () => {
                 className="gap-2"
               >
                 <Download className="h-4 w-4" />
-                Export
+                {t("export")}
               </Button>
 
               <Button
                 variant="outline"
                 className="gap-2"
-                onClick={() => {
-                  router.push("/");
-                }}
+                onClick={() => router.push("/")}
               >
                 <ChevronLeft className="h-4 w-4" />
-                Return to Log
+                {t("returnToLog")}
               </Button>
             </div>
           </div>
         </CardHeader>
+
         <CardContent className="flex-1 overflow-scroll">
           <div className="rounded-md border">
-            <Table className="">
+            <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-[180px]">Date</TableHead>
-                  <TableHead className="text-center">Day Shift</TableHead>
-                  <TableHead className="text-center">Night Shift</TableHead>
-                  <TableHead className="text-center">Total Buckets</TableHead>
-                  <TableHead className="text-right">Idle Time</TableHead>
+                  <TableHead className="w-[180px]">{t("date")}</TableHead>
+                  <TableHead className="text-center">{t("dayShift")}</TableHead>
+                  <TableHead className="text-center">
+                    {t("nightShift")}
+                  </TableHead>
+                  <TableHead className="text-center">
+                    {t("totalBuckets")}
+                  </TableHead>
+                  <TableHead className="text-right">{t("idleTime")}</TableHead>
                 </TableRow>
               </TableHeader>
-              <TableBody className="">
+
+              <TableBody>
                 {isLoading
-                  ? Array(30) // Adjust this number based on how many rows you want to show as skeletons
+                  ? Array(30)
                       .fill(0)
-                      .map((_, index) => (
-                        <TableRow key={index}>
-                          <TableCell className="font-medium">
+                      .map((_, idx) => (
+                        <TableRow key={idx}>
+                          <TableCell>
                             <Skeleton className="h-4 w-24" />
                           </TableCell>
-                          <TableCell className="text-center">
+                          <TableCell>
                             <Skeleton className="h-4 w-12" />
                           </TableCell>
-                          <TableCell className="text-center">
+                          <TableCell>
                             <Skeleton className="h-4 w-12" />
                           </TableCell>
-                          <TableCell className="text-center font-medium">
+                          <TableCell>
                             <Skeleton className="h-4 w-16" />
                           </TableCell>
-                          <TableCell className="text-right">
+                          <TableCell>
                             <Skeleton className="h-4 w-20" />
                           </TableCell>
                         </TableRow>
                       ))
                   : bucketData.map((row) => (
                       <TableRow key={row.date}>
-                        <TableCell className="font-medium">
+                        <TableCell>
                           {format(new Date(row.date), "yyyy-MM-dd")}
                         </TableCell>
                         <TableCell className="text-center">

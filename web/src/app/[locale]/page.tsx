@@ -39,13 +39,13 @@ const loggingStyles: Record<LoggingStatus, string> = {
 };
 
 const Page = () => {
+  const t = useTranslations("HomePage");
   const logs = useLogs();
   const router = useRouter();
   const loggingStatus = useLoggingStatus();
   const connectionStatus = useConnectionStatus();
   const objectCount = useObjectCounts();
   const timezone = useTimeZone();
-  const t = useTranslations("HomePage");
   const { resetCounter, addLog, resetLog, setLoggingStatus } = useMqttActions();
 
   useMqttConnection("frigate/reviews");

@@ -38,5 +38,24 @@
     "tooltipTime": "Time",
     "tooltipBuckets": "Buckets in period",
     "tooltipCumulative": "Cumulative total"
+  },
+  "HistoryPage": {
+    "title": "Bucket Unloading History",
+    "subtitle": "{month} • Shift and bucket statistics",
+    "export": "Export",
+    "returnToLog": "Return to Log",
+    "date": "Date",
+    "dayShift": "Day Shift",
+    "nightShift": "Night Shift",
+    "totalBuckets": "Total Buckets",
+    "idleTime": "Idle Time",
+    "pickMonth": "Pick a month"
+  },
+  "Header": {
+    "appName": "Bucket Logger",
+    "temperatureUnit": "°C",
+    "statusConnected": "Connected",
+    "statusReconnecting": "Reconnecting",
+    "statusDisconnected": "Disconnected"
   }
 }

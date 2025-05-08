@@ -38,6 +38,25 @@
     "tooltipTime": "Время",
     "tooltipBuckets": "Ведер в период",
     "tooltipCumulative": "Накопительный итог"
+  },
+  "HistoryPage": {
+    "title": "История разгрузки ведер",
+    "subtitle": "{month} • Статистика смен и ведер",
+    "export": "Экспорт",
+    "returnToLog": "Вернуться к журналу",
+    "date": "Дата",
+    "dayShift": "Дневная смена",
+    "nightShift": "Ночная смена",
+    "totalBuckets": "Всего ведер",
+    "idleTime": "Время простоя",
+    "pickMonth": "Выберите месяц"
+  },
+  "Header": {
+    "appName": "Bucket Logger",
+    "temperatureUnit": "°C",
+    "statusConnected": "Подключено",
+    "statusReconnecting": "Повторное подключение",
+    "statusDisconnected": "Отключено"
   }
 }
 
