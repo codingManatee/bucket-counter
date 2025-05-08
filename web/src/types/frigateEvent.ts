@@ -1,5 +1,6 @@
 export type FrigateEventType = "new" | "update" | "end";
 export type FrigateSeverity = "detection" | "alert";
+
 export type FrigateEvent = {
   type: FrigateEventType;
   before: FrigateReview;

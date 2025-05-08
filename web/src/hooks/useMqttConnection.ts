@@ -9,11 +9,13 @@ import {
 
 import { createEvent } from "@/services/events/eventsApi";
 import { FrigateEvent } from "@/types/frigateEvent";
+import { getMqttUri } from "@/lib/getMqttUri";
 
-export const useMqttConnection = (mqttUri: string, topic: string) => {
+export const useMqttConnection = (topic: string, explicitUri?: string) => {
   const { addLog, incrementObjectCount, setConnectionStatus } =
     useMqttActions();
   const connectionStatus = useConnectionStatus();
+  const mqttUri = explicitUri ?? getMqttUri();
 
   const connect = useCallback(() => {
     if (connectionStatus === "connected") return;

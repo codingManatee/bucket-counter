@@ -1,6 +1,5 @@
 import { ChartData } from "@/types/chart";
 import { FrigateEvent, FrigateSeverity } from "@/types/frigateEvent";
-
 import { FrigateEventMessage } from "@prisma/client";
 
 function sortTimeBuckets(times: string[], isNightShift = false): string[] {
@@ -15,6 +14,7 @@ function sortTimeBuckets(times: string[], isNightShift = false): string[] {
   return times.sort((a, b) => {
     const toNightIndex = (time: string) => {
       const [hour, min] = time.split(":").map(Number);
+
       let index = hour * 2 + (min >= 30 ? 1 : 0);
 
       if (hour < 7) index += 48;

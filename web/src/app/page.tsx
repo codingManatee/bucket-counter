@@ -20,7 +20,6 @@ import {
   Wifi,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 
 const statusStyles: Record<ConnectionStatus, string> = {
   connected:
@@ -44,16 +43,11 @@ const Page = () => {
   const objectCount = useObjectCounts();
   const { resetCounter, addLog, resetLog, setLoggingStatus } = useMqttActions();
 
-  // Connect to MQTT
-  useMqttConnection("ws://localhost:9001", "frigate/reviews");
+  useMqttConnection("frigate/reviews");
 
   const toggleLoggingStatus = () => {
     setLoggingStatus(loggingStatus === "logging" ? "hault" : "logging");
   };
-
-  useEffect(() => {
-    console.log(loggingStatus);
-  }, []);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 max-h-full overflow-auto">
