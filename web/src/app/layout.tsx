@@ -26,7 +26,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col h-screen h-max-screen overflow-hidden`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col h-dvh h-max-dvh overflow-hidden`}
       >
         <ClientShiftReset />
         <Header />
