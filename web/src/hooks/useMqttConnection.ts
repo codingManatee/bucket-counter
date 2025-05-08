@@ -21,7 +21,7 @@ export const useMqttConnection = (topic: string, explicitUri?: string) => {
     if (connectionStatus === "connected") return;
 
     const client = mqtt.connect(mqttUri, {
-      clientId: "web-client",
+      clientId: `web-client-${Math.random().toString(16).slice(2)}`,
       reconnectPeriod: 1000,
       clean: false,
     });
