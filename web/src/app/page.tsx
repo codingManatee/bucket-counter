@@ -58,11 +58,11 @@ const Page = () => {
       <div className="md:col-span-3 overflow-y-auto ">
         <Card>
           <CardHeader>
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col md:flex-row gap-2 justify-between items-center">
               <CardTitle className="text-3xl font-extrabold">
                 Log Output
               </CardTitle>
-              <div className="space-x-3">
+              <div className="space-x-2 space-y-2">
                 <Button
                   variant="outline"
                   size="sm"

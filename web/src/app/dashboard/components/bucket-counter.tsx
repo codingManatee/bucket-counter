@@ -34,18 +34,20 @@ const BucketCounter = () => {
   }, [timezone]);
 
   return (
-    <Card className="">
+    <Card className="h-full">
       <CardContent className="h-full">
-        <div className="flex flex-col items-center justify-center h-full">
+        <div className="flex flex-col h-full">
           {isLoading ? (
             <Skeleton className="w-24 h-8 mb-2" />
           ) : (
-            <div className="text-3xl font-bold">{dayCount + nightCount}</div>
+            <div className="text-3xl font-bold md:text-5xl lg:text-10xl">
+              {dayCount + nightCount}
+            </div>
           )}
           <div className="text-sm text-muted-foreground">Total Buckets</div>
 
-          <div className="w-full grid grid-cols-2 gap-2 mt-3 text-center">
-            <div className="bg-amber-100 rounded-md p-2">
+          <div className="flex-1 w-full grid grid-cols-2 gap-2 mt-3 text-center">
+            <div className="flex flex-col bg-amber-100 rounded-md p-2 justify-center">
               {isLoading ? (
                 <>
                   <Skeleton className="w-10 h-6 mx-auto mb-1" />
@@ -53,13 +55,17 @@ const BucketCounter = () => {
                 </>
               ) : (
                 <>
-                  <div className="text-lg font-medium">{dayCount}</div>
-                  <div className="text-xs text-amber-800">Day Shift</div>
+                  <div className="text-lg font-medium md:text-4xl lg:text-7xl">
+                    {dayCount}
+                  </div>
+                  <div className="text-xs text-amber-800 md:text-sm lg:text-xl">
+                    Day Shift
+                  </div>
                 </>
               )}
             </div>
 
-            <div className="bg-indigo-100 rounded-md p-2">
+            <div className="flex flex-col bg-indigo-100 rounded-md p-2 justify-center">
               {isLoading ? (
                 <>
                   <Skeleton className="w-10 h-6 mx-auto mb-1" />
@@ -67,8 +73,12 @@ const BucketCounter = () => {
                 </>
               ) : (
                 <>
-                  <div className="text-lg font-medium">{nightCount}</div>
-                  <div className="text-xs text-indigo-800">Night Shift</div>
+                  <div className="text-lg font-medium md:text-4xl lg:text-7xl">
+                    {nightCount}
+                  </div>
+                  <div className="text-xs text-indigo-800 md:text-sm lg:text-xl">
+                    Night Shift
+                  </div>
                 </>
               )}
             </div>

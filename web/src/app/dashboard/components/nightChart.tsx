@@ -78,7 +78,7 @@ const NightChart = () => {
                   position: "insideBottom",
                 }}
                 tick={{ fontSize: 12 }}
-                height={50}
+                height={40}
               />
               <YAxis
                 label={{
@@ -87,7 +87,7 @@ const NightChart = () => {
                   position: "insideLeft",
                 }}
                 tick={{ fontSize: 12 }}
-                width={50}
+                width={35}
               />
               <Tooltip content={<CustomTooltip />} />
               <Bar

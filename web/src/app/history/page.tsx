@@ -113,8 +113,8 @@ const Page = () => {
   }, [timezone, date]);
 
   return (
-    <div className="container p-2 max-w-5xl">
-      <Card className="border-0 shadow-sm">
+    <div className="p-4 w-full h-full">
+      <Card className="border-0 shadow-sm h-full">
         <CardHeader className="pb-0">
           <div className="flex items-center justify-between">
             <div className="space-y-1">
@@ -125,7 +125,7 @@ const Page = () => {
                 {format(date, "MMMM yyyy")} • Shift and bucket statistics
               </p>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-col md:flex-row items-center gap-2">
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
@@ -173,9 +173,9 @@ const Page = () => {
             </div>
           </div>
         </CardHeader>
-        <CardContent className="h-[250px]">
-          <div className="rounded-md border h-full overflow-scroll">
-            <Table className="h-full">
+        <CardContent className="flex-1 overflow-scroll">
+          <div className="rounded-md border">
+            <Table className="">
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-[180px]">Date</TableHead>
@@ -185,7 +185,7 @@ const Page = () => {
                   <TableHead className="text-right">Idle Time</TableHead>
                 </TableRow>
               </TableHeader>
-              <TableBody>
+              <TableBody className="">
                 {isLoading
                   ? Array(30) // Adjust this number based on how many rows you want to show as skeletons
                       .fill(0)

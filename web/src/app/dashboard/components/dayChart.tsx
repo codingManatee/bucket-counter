@@ -85,7 +85,7 @@ const DayChart = ({ isLoading = false }: DayChartProps) => {
                     position: "insideBottom",
                   }}
                   tick={{ fontSize: 12 }}
-                  height={50}
+                  height={40}
                 />
                 <YAxis
                   label={{
@@ -94,7 +94,7 @@ const DayChart = ({ isLoading = false }: DayChartProps) => {
                     position: "insideLeft",
                   }}
                   tick={{ fontSize: 12 }}
-                  width={50}
+                  width={35}
                 />
                 <Tooltip content={<CustomTooltip />} />
                 <Bar
