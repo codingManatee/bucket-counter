@@ -1,0 +1,26 @@
+{
+  "Setting": { 
+    "title": "Settings",
+    "description": "Configure your Bucket Logger preferences",
+    "timezone": "Timezone",
+    "timezone_helper": "Timestamps will be displayed in the selected timezone",
+    "language": "Language",
+    "language_helper": "Select interface language"
+  },
+  "HomePage": {
+    "logOutput": "Log Output",
+    "history": "History",
+    "dashboard": "Dashboard",
+    "clear": "Clear",
+    "noLogs": "No log entries yet. Connect the system and press Start to begin logging.",
+    "loggingHaulted": "-- LOGGING HAULTED --",
+    "connection": "Connection",
+    "counter": "COUNTER",
+    "resetShift": "Reset Shift",
+    "start": "Start",
+    "stop": "Stop",
+    "connected": "Connected",
+    "disconnected": "Disconnected",
+    "reconnecting": "Reconnecting"
+  }
+}

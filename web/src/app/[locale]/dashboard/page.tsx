@@ -1,8 +1,8 @@
 "use client";
 
-import BucketCounter from "@/app/dashboard/components/bucket-counter";
-import DayChart from "@/app/dashboard/components/dayChart";
-import NightChart from "@/app/dashboard/components/nightChart";
+import BucketCounter from "@/app/[locale]/dashboard/components/bucket-counter";
+import DayChart from "@/app/[locale]/dashboard/components/dayChart";
+import NightChart from "@/app/[locale]/dashboard/components/nightChart";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft } from "lucide-react";

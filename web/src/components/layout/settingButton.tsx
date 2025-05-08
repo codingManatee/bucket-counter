@@ -12,11 +12,12 @@ import {
 } from "@/components/ui/sheet";
 import { Label } from "@/components/ui/label";
 import { useMqttActions, useTimeZone } from "@/stores/useMqttStore";
+import { useTranslations } from "next-intl";
 
 export default function SettingsButton() {
   const { setTimeZone } = useMqttActions();
   const timezone = useTimeZone();
-
+  const t = useTranslations("Setting");
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -31,14 +32,12 @@ export default function SettingsButton() {
       </SheetTrigger>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>Settings</SheetTitle>
-          <SheetDescription>
-            Configure your Bucket Logger preferences
-          </SheetDescription>
+          <SheetTitle>{t("title")}</SheetTitle>
+          <SheetDescription>{t("description")}</SheetDescription>
         </SheetHeader>
         <div className="py-6 space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="timezone">Timezone</Label>
+            <Label htmlFor="timezone">{t("timezone")}</Label>
             <select
               id="timezone"
               value={timezone ?? ""}
@@ -74,7 +73,13 @@ export default function SettingsButton() {
             </select>
 
             <p className="text-xs text-muted-foreground mt-1">
-              Timestamps will be displayed in the selected timezone
+              {t("timezone_helper")}
+            </p>
+          </div>
+          <div className="space-y-0.5">
+            <Label htmlFor="dark-mode">{t("language")}</Label>
+            <p className="text-sm text-muted-foreground">
+              {t("language_helper")}
             </p>
           </div>
         </div>

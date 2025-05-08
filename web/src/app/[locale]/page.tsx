@@ -21,6 +21,7 @@ import {
   Square,
   Wifi,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 
 const statusStyles: Record<ConnectionStatus, string> = {
@@ -44,7 +45,7 @@ const Page = () => {
   const connectionStatus = useConnectionStatus();
   const objectCount = useObjectCounts();
   const timezone = useTimeZone();
-
+  const t = useTranslations("HomePage");
   const { resetCounter, addLog, resetLog, setLoggingStatus } = useMqttActions();
 
   useMqttConnection("frigate/reviews");
@@ -60,7 +61,7 @@ const Page = () => {
           <CardHeader>
             <div className="flex flex-col md:flex-row gap-2 justify-between items-center">
               <CardTitle className="text-3xl font-extrabold">
-                Log Output
+                {t("logOutput")}
               </CardTitle>
               <div className="space-x-2 space-y-2">
                 <Button
@@ -71,7 +72,7 @@ const Page = () => {
                   }}
                 >
                   <ScrollText size={14} />
-                  History
+                  {t("history")}
                 </Button>
                 <Button
                   variant="outline"
@@ -81,7 +82,7 @@ const Page = () => {
                   }}
                 >
                   <ChartNoAxesCombined size={14} />
-                  Dashboard
+                  {t("dashboard")}
                 </Button>
                 <Button
                   variant="outline"
@@ -91,7 +92,7 @@ const Page = () => {
                   }}
                 >
                   <RotateCcw size={14} />
-                  Clear
+                  {t("clear")}
                 </Button>
               </div>
             </div>
@@ -102,7 +103,7 @@ const Page = () => {
                  bg-slate-100 dark:bg-slate-800 font-mono text-sm"
             >
               {loggingStatus === "hault" ? (
-                <div className="space-y-2"> -- LOGGING HAULTED -- </div>
+                <div className="space-y-2">{t("loggingHaulted")}</div>
               ) : logs.length > 0 ? (
                 logs.map((log, idx) => (
                   <div key={idx} className="pb-1">
@@ -112,8 +113,7 @@ const Page = () => {
               ) : (
                 // empty-state message when "logging" but no entries yet
                 <div className="text-muted-foreground italic">
-                  No log entries yet. Connect the system and press Start to
-                  begin logging.
+                  {t("noLogs")}
                 </div>
               )}
             </ScrollArea>
@@ -126,7 +126,7 @@ const Page = () => {
             <CardHeader className="px-0">
               <CardTitle>
                 <div className="flex flex-row justify-center items-center">
-                  <div className="">Connection</div>
+                  <div className="">{t("connection")}</div>
                   <Wifi size={14} className="ml-1" />
                 </div>
               </CardTitle>
@@ -134,15 +134,17 @@ const Page = () => {
             <Button
               className={`py-2 px-4 rounded-md text-center font-medium w-full ${statusStyles[connectionStatus]}`}
             >
-              {connectionStatus.charAt(0).toUpperCase() +
-                connectionStatus.slice(1)}
+              {t(
+                connectionStatus.charAt(0).toLowerCase() +
+                  connectionStatus.slice(1)
+              )}
             </Button>
           </CardContent>
         </Card>
         <Card className="flex-1">
           <CardContent className="space-y-6 h-full flex flex-1 flex-col justify-between">
             <div className="text-center">
-              <div className="text-sm font-medium mb-1">COUNTER</div>
+              <div className="text-sm font-medium mb-1">{t("counter")}</div>
               <div className="text-6xl font-bold text-blue-600">
                 {objectCount}
               </div>
@@ -157,7 +159,7 @@ const Page = () => {
                 }}
               >
                 <RotateCcw size={14} className="mr-1" />
-                Reset Shift
+                {t("resetShift")}
               </Button>
             </div>
             <div className="">
@@ -167,12 +169,12 @@ const Page = () => {
               >
                 {loggingStatus === "logging" ? (
                   <>
-                    <Square size={16} className="mr-1.5" /> Stop
+                    <Square size={16} className="mr-1.5" /> {t("stop")}
                   </>
                 ) : (
                   <>
                     <Play size={16} className="mr-1.5" />
-                    Start
+                    {t("start")}
                   </>
                 )}
               </Button>

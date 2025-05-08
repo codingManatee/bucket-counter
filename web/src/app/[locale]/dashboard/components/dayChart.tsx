@@ -15,12 +15,12 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "../../../components/ui/card";
+} from "../../../../components/ui/card";
 import { useEffect, useState } from "react";
 import { getDayShiftEventsGrouped } from "@/services/events/eventsApi";
 import { useTimeZone } from "@/stores/useMqttStore";
 import { transformGroupedEventsToChartData } from "@/lib/helper";
-import { Skeleton } from "../../../components/ui/skeleton";
+import { Skeleton } from "../../../../components/ui/skeleton";
 import { ChartData } from "@/types/chart";
 
 const CustomTooltip = ({ active, payload, label }: any) => {

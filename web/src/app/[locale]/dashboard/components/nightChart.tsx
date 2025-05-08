@@ -15,7 +15,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "../../../components/ui/card";
+} from "../../../../components/ui/card";
 import { useState, useEffect } from "react";
 import { useTimeZone } from "@/stores/useMqttStore";
 import { getNightShiftEventsGrouped } from "@/services/events/eventsApi";
