@@ -17,7 +17,7 @@ function sortTimeBuckets(times: string[], isNightShift = false): string[] {
 
       let index = hour * 2 + (min >= 30 ? 1 : 0);
 
-      if (hour < 7) index += 48;
+      if (hour < 8) index += 48;
       return index;
     };
     return toNightIndex(a) - toNightIndex(b);
