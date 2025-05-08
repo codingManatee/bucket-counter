@@ -22,6 +22,22 @@
     "connected": "Подключено",
     "disconnected": "Отключено",
     "reconnecting": "Повторное подключение"
+  },
+  "DashboardPage": {
+    "header": "Панель управления",
+    "returnToLog": "Вернуться к журналу",
+    "totalBuckets": "Всего ведер",
+    "dayShift": "Дневная смена",
+    "nightShift": "Ночная смена",
+    "dayChartTitle": "График разгрузки дневной смены",
+    "nightChartTitle": "График разгрузки ночной смены",
+    "xAxisLabel": "Время (ЧЧ:ММ)",
+    "yAxisLabel": "Количество ведер",
+    "bucketsPerPeriod": "Ведер за 30 мин",
+    "cumulativeTotal": "Накопительный итог",
+    "tooltipTime": "Время",
+    "tooltipBuckets": "Ведер в период",
+    "tooltipCumulative": "Накопительный итог"
   }
 }
 

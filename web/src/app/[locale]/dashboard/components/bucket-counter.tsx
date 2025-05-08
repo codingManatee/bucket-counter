@@ -8,8 +8,10 @@ import { useTimeZone } from "@/stores/useMqttStore";
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "../../../../components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useTranslations } from "next-intl";
 
 const BucketCounter = () => {
+  const t = useTranslations("DashboardPage");
   const timezone = useTimeZone();
   const [dayCount, setDayCount] = useState(0);
   const [nightCount, setNightCount] = useState(0);
@@ -44,7 +46,9 @@ const BucketCounter = () => {
               {dayCount + nightCount}
             </div>
           )}
-          <div className="text-sm text-muted-foreground">Total Buckets</div>
+          <div className="text-sm text-muted-foreground">
+            {t("totalBuckets")}
+          </div>
 
           <div className="flex-1 w-full grid grid-cols-2 gap-2 mt-3 text-center">
             <div className="flex flex-col bg-amber-100 rounded-md p-2 justify-center">
@@ -59,7 +63,7 @@ const BucketCounter = () => {
                     {dayCount}
                   </div>
                   <div className="text-xs text-amber-800 md:text-sm lg:text-xl">
-                    Day Shift
+                    {t("dayShift")}
                   </div>
                 </>
               )}
@@ -77,7 +81,7 @@ const BucketCounter = () => {
                     {nightCount}
                   </div>
                   <div className="text-xs text-indigo-800 md:text-sm lg:text-xl">
-                    Night Shift
+                    {t("nightShift")}
                   </div>
                 </>
               )}

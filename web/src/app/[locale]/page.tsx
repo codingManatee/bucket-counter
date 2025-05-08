@@ -134,10 +134,7 @@ const Page = () => {
             <Button
               className={`py-2 px-4 rounded-md text-center font-medium w-full ${statusStyles[connectionStatus]}`}
             >
-              {t(
-                connectionStatus.charAt(0).toLowerCase() +
-                  connectionStatus.slice(1)
-              )}
+              {t(connectionStatus)}
             </Button>
           </CardContent>
         </Card>

@@ -22,5 +22,21 @@
     "connected": "Connected",
     "disconnected": "Disconnected",
     "reconnecting": "Reconnecting"
+  },
+  "DashboardPage": {
+    "header": "Dashboard",
+    "returnToLog": "Return to Log",
+    "totalBuckets": "Total Buckets",
+    "dayShift": "Day Shift",
+    "nightShift": "Night Shift",
+    "dayChartTitle": "Day Shift Unloading Chart",
+    "nightChartTitle": "Night Shift Unloading Chart",
+    "xAxisLabel": "Time (HH:MM)",
+    "yAxisLabel": "Number of Buckets",
+    "bucketsPerPeriod": "Buckets per 30 min",
+    "cumulativeTotal": "Cumulative total",
+    "tooltipTime": "Time",
+    "tooltipBuckets": "Buckets in period",
+    "tooltipCumulative": "Cumulative total"
   }
 }
