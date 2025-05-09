@@ -34,7 +34,7 @@ const statusStyles: Record<ConnectionStatus, string> = {
 };
 
 const loggingStyles: Record<LoggingStatus, string> = {
-  hault: "bg-green-500 hover:bg-green-600",
+  halted: "bg-green-500 hover:bg-green-600",
   logging: "bg-red-400 hover:bg-red-500",
 };
 
@@ -51,7 +51,7 @@ const Page = () => {
   useMqttConnection("frigate/reviews");
 
   const toggleLoggingStatus = () => {
-    setLoggingStatus(loggingStatus === "logging" ? "hault" : "logging");
+    setLoggingStatus(loggingStatus === "logging" ? "halted" : "logging");
   };
 
   return (
@@ -102,8 +102,8 @@ const Page = () => {
               className="overflow-scroll h-[calc(100vh-200px)] rounded-md border p-4 
                  bg-slate-100 dark:bg-slate-800 font-mono text-sm"
             >
-              {loggingStatus === "hault" ? (
-                <div className="space-y-2">{t("loggingHaulted")}</div>
+              {loggingStatus === "halted" ? (
+                <div className="space-y-2">{t("loggingHalted")}</div>
               ) : logs.length > 0 ? (
                 logs.map((log, idx) => (
                   <div key={idx} className="pb-1">

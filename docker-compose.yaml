@@ -1,22 +1,24 @@
+version: "3.8"
+
 services:
   frigate:
     container_name: frigate
-    privileged: false 
+    image: ghcr.io/blakeblackshear/frigate:stable
+    privileged: false
     restart: unless-stopped
     stop_grace_period: 30s
-    image: ghcr.io/blakeblackshear/frigate:stable
     shm_size: "512mb"
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./frigate/config:/config
       - ./frigate/storage:/media/frigate
-      - type: tmpfs 
+      - type: tmpfs
         target: /tmp/cache
         tmpfs:
           size: 1000000000
     ports:
       - "8971:8971"
-      - "5000:5000" 
+      - "5000:5000"
     environment:
       FRIGATE_RTSP_PASSWORD: "password"
     networks:
@@ -25,6 +27,7 @@ services:
   mqtt:
     container_name: mosquitto
     image: eclipse-mosquitto:latest
+    restart: always
     volumes:
       - ./mosquitto/config:/mosquitto/config
       - ./mosquitto/data:/mosquitto/data
@@ -32,16 +35,57 @@ services:
     ports:
       - "1883:1883"
       - "9001:9001"
-    restart: always
     networks:
       - frigate-net
 
-  webapp:
+  rtsp:
+    container_name: rtsp-server
+    image: aler9/rtsp-simple-server
+    restart: unless-stopped
+    environment:
+      - RTSP_PROTOCOLS=tcp
+    ports:
+      - "8554:8554"
+    networks:
+      - frigate-net
+    profiles:
+      - dev
+
+  webapp-dev:
     container_name: webUI
-    image: bucket-counter-web:prod
     build:
       context: ./web
       dockerfile: Dockerfile
+      args:
+        INSTALL_DEPS: "false"
+        BUILD_APP:   "false"
+        NODE_ENV:    "development"
+    image: bucket-counter-web:dev
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+      - "5555:5555"
+    depends_on:
+      - frigate
+      - mqtt
+    volumes:
+      - ./web:/app           
+      - /app/node_modules
+    networks:
+      - frigate-net
+    profiles:
+      - dev
+
+  webapp:
+    container_name: webUI
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+      args:
+        INSTALL_DEPS: "true"
+        BUILD_APP:   "true"
+        NODE_ENV:    "production"
+    image: bucket-counter-web:prod
     restart: unless-stopped
     ports:
       - "3000:3000"
@@ -52,9 +96,9 @@ services:
       - ./web/prisma:/app/prisma
     networks:
       - frigate-net
+    profiles:
+      - prod
 
 networks:
   frigate-net:
     driver: bridge
-
-

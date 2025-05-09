@@ -35,7 +35,7 @@ export const useMqttConnection = (topic: string, explicitUri?: string) => {
       const raw = msg.toString();
 
       const loggingStatus = useMqttStore.getState().loggingStatus;
-      if (loggingStatus === "hault") return;
+      if (loggingStatus === "halted") return;
 
       try {
         const eventData: FrigateEvent = JSON.parse(raw);

@@ -33,7 +33,7 @@ const useMqttStore = create<MqttStore>()(
       objectCount: 0,
       connectionStatus: "disconnected",
       logs: [],
-      loggingStatus: "hault",
+      loggingStatus: "halted",
       timezone: 0,
       selectedDay: new Date(),
       selectedShiftDisplay: ShiftDisplay.DAY,
