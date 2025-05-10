@@ -42,10 +42,8 @@ export const useMqttConnection = (topic: string, explicitUri?: string) => {
 
         if (eventData.before.severity !== "alert") return;
 
-        if (eventData.type === "new") {
+        if (eventData.type === "end") {
           incrementObjectCount();
-          addLog("Bucket unloading initiated");
-        } else if (eventData.type === "end") {
           addLog("Bucket unloading finished");
           if (
             typeof eventData?.after?.end_time === "number" &&
