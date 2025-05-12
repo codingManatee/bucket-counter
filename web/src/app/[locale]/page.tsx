@@ -2,17 +2,22 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useMqttConnection } from "@/hooks/useMqttConnection";
-import { resetCurrentShift } from "@/services/events/eventsApi";
+import {
+  getDayShiftEvents,
+  getNightShiftEvents,
+  resetCurrentShift,
+} from "@/services/events/eventsApi";
 import {
   useConnectionStatus,
   useLoggingStatus,
   useLogs,
   useMqttActions,
-  useObjectCounts,
   useTimeZone,
 } from "@/stores/useMqttStore";
 import { ConnectionStatus, LoggingStatus } from "@/types/mqttStore";
+import { FrigateEventMessage } from "@prisma/client";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
+import { addHours, isBefore, setHours } from "date-fns";
 import {
   ChartNoAxesCombined,
   Play,
@@ -23,6 +28,7 @@ import {
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
 
 const statusStyles: Record<ConnectionStatus, string> = {
   connected:
@@ -44,16 +50,43 @@ const Page = () => {
   const router = useRouter();
   const loggingStatus = useLoggingStatus();
   const connectionStatus = useConnectionStatus();
-  const objectCount = useObjectCounts();
   const timezone = useTimeZone();
-  const { resetCounter, addLog, resetLog, setLoggingStatus } = useMqttActions();
+  const { addLog, resetLog, setLoggingStatus } = useMqttActions();
+  const [count, setCount] = useState(0);
 
   useMqttConnection("frigate/reviews");
+
+  const fetchCount = useCallback(async () => {
+    const nowUtc = new Date();
+    const nowLocal = addHours(nowUtc, timezone);
+    const cutoff = setHours(new Date(nowLocal), 20);
+    const isDayShift = isBefore(nowLocal, cutoff);
+
+    try {
+      const events: FrigateEventMessage[] = isDayShift
+        ? await getDayShiftEvents(timezone)
+        : await getNightShiftEvents(timezone);
+
+      setCount(events.length);
+    } catch (err) {
+      console.error("failed to load events:", err);
+      setCount(0);
+    }
+  }, [timezone]);
+
+  useEffect(() => {
+    void fetchCount();
+  }, [logs, fetchCount]);
+
+  const handleReset = async () => {
+    addLog("Reset current shift to 0");
+    await resetCurrentShift(timezone);
+    await fetchCount();
+  };
 
   const toggleLoggingStatus = () => {
     setLoggingStatus(loggingStatus === "logging" ? "hault" : "logging");
   };
-
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 max-h-full overflow-auto">
       <div className="md:col-span-3 overflow-y-auto ">
@@ -142,17 +175,13 @@ const Page = () => {
           <CardContent className="space-y-6 h-full flex flex-1 flex-col justify-between">
             <div className="text-center">
               <div className="text-sm font-medium mb-1">{t("counter")}</div>
-              <div className="text-6xl font-bold text-blue-600">
-                {objectCount}
-              </div>
+              <div className="text-6xl font-bold text-blue-600">{count}</div>
               <Button
                 variant="ghost"
                 size="sm"
                 className="mt-2"
                 onClick={async () => {
-                  addLog("Reset current shift to 0");
-                  resetCounter();
-                  resetCurrentShift(timezone);
+                  handleReset();
                 }}
               >
                 <RotateCcw size={14} className="mr-1" />

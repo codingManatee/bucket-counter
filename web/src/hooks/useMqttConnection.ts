@@ -12,8 +12,7 @@ import { FrigateEvent } from "@/types/frigateEvent";
 import { getMqttUri } from "@/lib/getMqttUri";
 
 export const useMqttConnection = (topic: string, explicitUri?: string) => {
-  const { addLog, incrementObjectCount, setConnectionStatus } =
-    useMqttActions();
+  const { addLog, setConnectionStatus } = useMqttActions();
   const connectionStatus = useConnectionStatus();
   const mqttUri = explicitUri ?? getMqttUri();
 
@@ -43,7 +42,6 @@ export const useMqttConnection = (topic: string, explicitUri?: string) => {
         if (eventData.before.severity !== "alert") return;
 
         if (eventData.type === "end") {
-          incrementObjectCount();
           addLog("Bucket unloading finished");
           if (
             typeof eventData?.after?.end_time === "number" &&
@@ -52,10 +50,7 @@ export const useMqttConnection = (topic: string, explicitUri?: string) => {
             const duration = (
               eventData.after.end_time - eventData.after.start_time
             ).toFixed(2);
-            const count = useMqttStore.getState().objectCount;
-            addLog(
-              `Current count: ${count}, Total time unloading: ${duration}s`
-            );
+            addLog(`Total time unloading: ${duration}s`);
           }
           createEvent(eventData);
         }

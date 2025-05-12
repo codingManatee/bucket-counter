@@ -6,7 +6,6 @@ import { createJSONStorage, persist } from "zustand/middleware";
 type Locale = "en" | "ru";
 
 interface MqttStore {
-  objectCount: number;
   connectionStatus: ConnectionStatus;
   logs: string[];
   loggingStatus: LoggingStatus;
@@ -15,12 +14,11 @@ interface MqttStore {
   selectedShiftDisplay: ShiftDisplay;
   locale: Locale;
   actions: {
-    incrementObjectCount: () => void;
     setConnectionStatus: (status: ConnectionStatus) => void;
     addLog: (entry: string) => void;
     setLoggingStatus: (status: LoggingStatus) => void;
     resetLog: () => void;
-    resetCounter: () => void;
+
     setTimeZone: (timezone: number) => void;
     setSelectedShiftDisplay: (shift: ShiftDisplay) => void;
     setLocale: (locale: Locale) => void;
@@ -43,8 +41,6 @@ const useMqttStore = create<MqttStore>()(
           : "en"
         : "en") as Locale,
       actions: {
-        incrementObjectCount: () =>
-          set((state) => ({ objectCount: state.objectCount + 1 })),
         setConnectionStatus: (connectionStatus) =>
           set({ connectionStatus: connectionStatus }),
         setLoggingStatus: (loggingStatus: LoggingStatus) =>
@@ -59,11 +55,7 @@ const useMqttStore = create<MqttStore>()(
           set({
             logs: [],
           }),
-        resetCounter: () => {
-          set({
-            objectCount: 0,
-          });
-        },
+
         setTimeZone: (timezone) => set({ timezone: timezone }),
 
         setSelectedShiftDisplay: (shift) =>
@@ -90,7 +82,6 @@ export const useConnectionStatus = () =>
 export const useLogs = () => useMqttStore((state) => state.logs);
 export const useLoggingStatus = () =>
   useMqttStore((state) => state.loggingStatus);
-export const useObjectCounts = () => useMqttStore((state) => state.objectCount);
 export const useTimeZone = () => useMqttStore((state) => state.timezone);
 export const useSelectedDay = () => useMqttStore((state) => state.selectedDay);
 export const useSelectedShiftDisplay = () =>
