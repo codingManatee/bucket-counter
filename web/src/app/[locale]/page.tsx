@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useMqttConnection } from "@/hooks/useMqttConnection";
+import { getShift } from "@/lib/getShift";
 import {
   getDayShiftEvents,
   getNightShiftEvents,
@@ -17,7 +18,6 @@ import {
 import { ConnectionStatus, LoggingStatus } from "@/types/mqttStore";
 import { FrigateEventMessage } from "@prisma/client";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
-import { addHours, isBefore, setHours } from "date-fns";
 import {
   ChartNoAxesCombined,
   Play,
@@ -58,9 +58,8 @@ const Page = () => {
 
   const fetchCount = useCallback(async () => {
     const nowUtc = new Date();
-    const nowLocal = addHours(nowUtc, timezone);
-    const cutoff = setHours(new Date(nowLocal), 20);
-    const isDayShift = isBefore(nowLocal, cutoff);
+
+    const isDayShift = getShift(nowUtc, timezone) === 1;
 
     try {
       const events: FrigateEventMessage[] = isDayShift
@@ -80,6 +79,7 @@ const Page = () => {
 
   const handleReset = async () => {
     addLog("Reset current shift to 0");
+    setCount(0);
     await resetCurrentShift(timezone);
     await fetchCount();
   };

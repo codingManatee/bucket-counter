@@ -7,9 +7,22 @@ import {
   useMqttStore,
 } from "@/stores/useMqttStore";
 
-import { createEvent } from "@/services/events/eventsApi";
-import { FrigateEvent } from "@/types/frigateEvent";
+import {
+  createEvent,
+  getDayShiftEvents,
+  getNightShiftEvents,
+} from "@/services/events/eventsApi";
 import { getMqttUri } from "@/lib/getMqttUri";
+import { FrigateEventMessage } from "@prisma/client";
+import {
+  addHours,
+  setHours,
+  isBefore,
+  format,
+  isAfter,
+  startOfDay,
+} from "date-fns";
+import { FrigateEvent } from "@/types/frigateEvent";
 
 export const useMqttConnection = (topic: string, explicitUri?: string) => {
   const { addLog, setConnectionStatus } = useMqttActions();
@@ -30,7 +43,7 @@ export const useMqttConnection = (topic: string, explicitUri?: string) => {
       client.subscribe(topic);
     });
 
-    client.on("message", (_topic, msg) => {
+    client.on("message", async (_topic, msg) => {
       const raw = msg.toString();
 
       const loggingStatus = useMqttStore.getState().loggingStatus;
@@ -39,23 +52,57 @@ export const useMqttConnection = (topic: string, explicitUri?: string) => {
       try {
         const eventData: FrigateEvent = JSON.parse(raw);
 
-        if (eventData.before.severity !== "alert") return;
+        if (eventData.before.severity !== "alert" || eventData.type !== "end")
+          return;
 
-        if (eventData.type === "end") {
-          addLog("Bucket unloading finished");
-          if (
-            typeof eventData?.after?.end_time === "number" &&
-            typeof eventData?.after?.start_time === "number"
-          ) {
-            const duration = (
-              eventData.after.end_time - eventData.after.start_time
-            ).toFixed(2);
-            addLog(`Total time unloading: ${duration}s`);
-          }
-          createEvent(eventData);
+        const timezone = useMqttStore.getState().timezone;
+
+        // 1) store the event first
+        await createEvent(eventData);
+
+        // 2) compute local time
+        const nowUtc = new Date();
+        const nowLocal = addHours(nowUtc, timezone);
+        const dateLabel = format(nowLocal, "dd.MM");
+        const timeLabel = format(nowLocal, "HH:mm:ss");
+
+        // 3) build our shift cutoffs (today at 08:00 & 20:00)
+        const dayStart = startOfDay(new Date(nowLocal));
+        const morningCutoff = setHours(dayStart, 8);
+        const eveningCutoff = setHours(dayStart, 20);
+
+        // 4) decide which shift we're in
+        const isShift1 =
+          isAfter(nowLocal, morningCutoff) && isBefore(nowLocal, eveningCutoff);
+        const shiftNumber = isShift1 ? 1 : 2;
+
+        // 6) fetch fresh events so our bucket count is correct
+        const events: FrigateEventMessage[] = isShift1
+          ? await getDayShiftEvents(timezone)
+          : await getNightShiftEvents(timezone);
+        const bucketNumber = events.length;
+
+        if (bucketNumber === 1) {
+          addLog(`[${dateLabel}] [${timeLabel}] Shift ${shiftNumber} started`);
         }
-      } catch (e) {
-        console.error("Failed to parse/store message", e);
+
+        // 7) compute duration
+        let durationSec = 0;
+        if (
+          typeof eventData.after?.start_time === "number" &&
+          typeof eventData.after?.end_time === "number"
+        ) {
+          durationSec = eventData.after.end_time - eventData.after.start_time;
+        }
+        const durationStr = durationSec.toFixed(2);
+
+        const bucketLog = `[${dateLabel}] [${timeLabel}] Shift ${shiftNumber} – Bucket #${bucketNumber} – Total time: ${durationStr} s`;
+
+        const logEntry = durationSec < 20 ? `⚠️ ${bucketLog}` : bucketLog;
+
+        addLog(logEntry);
+      } catch (err) {
+        console.error("Failed to handle end-event", err);
       }
     });
 

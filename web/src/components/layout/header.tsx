@@ -45,7 +45,7 @@ const Header = () => {
             variant="outline"
             className="hidden sm:block text-white border-white"
           >
-            v1.8
+            v2.0
           </Badge>
         </div>
 
