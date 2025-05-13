@@ -14,14 +14,7 @@ import {
 } from "@/services/events/eventsApi";
 import { getMqttUri } from "@/lib/getMqttUri";
 import { FrigateEventMessage } from "@prisma/client";
-import {
-  addHours,
-  setHours,
-  isBefore,
-  format,
-  isAfter,
-  startOfDay,
-} from "date-fns";
+import { setHours, isBefore, format, isAfter, startOfDay } from "date-fns";
 import { FrigateEvent } from "@/types/frigateEvent";
 
 export const useMqttConnection = (topic: string, explicitUri?: string) => {
@@ -55,16 +48,12 @@ export const useMqttConnection = (topic: string, explicitUri?: string) => {
         if (eventData.before.severity !== "alert" || eventData.type !== "end")
           return;
 
-        const timezone = useMqttStore.getState().timezone;
-
         // 1) store the event first
         await createEvent(eventData);
 
         // 2) compute local time
-        const nowUtc = new Date();
-        const nowLocal = addHours(nowUtc, timezone);
+        const nowLocal = new Date();
         const dateLabel = format(nowLocal, "dd.MM");
-        const timeLabel = format(nowLocal, "HH:mm:ss");
 
         // 3) build our shift cutoffs (today at 08:00 & 20:00)
         const dayStart = startOfDay(new Date(nowLocal));
@@ -77,13 +66,15 @@ export const useMqttConnection = (topic: string, explicitUri?: string) => {
         const shiftNumber = isShift1 ? 1 : 2;
 
         // 6) fetch fresh events so our bucket count is correct
+        // Server action require timezone
+        const timezone = useMqttStore.getState().timezone;
         const events: FrigateEventMessage[] = isShift1
           ? await getDayShiftEvents(timezone)
           : await getNightShiftEvents(timezone);
         const bucketNumber = events.length;
 
         if (bucketNumber === 1) {
-          addLog(`[${dateLabel}] [${timeLabel}] Shift ${shiftNumber} started`);
+          addLog(`[${dateLabel}] Shift ${shiftNumber} started`);
         }
 
         // 7) compute duration
@@ -96,7 +87,7 @@ export const useMqttConnection = (topic: string, explicitUri?: string) => {
         }
         const durationStr = durationSec.toFixed(2);
 
-        const bucketLog = `[${dateLabel}] [${timeLabel}] Shift ${shiftNumber} – Bucket #${bucketNumber} – Total time: ${durationStr} s`;
+        const bucketLog = `[${dateLabel}] Shift ${shiftNumber} – Bucket #${bucketNumber} – Total time: ${durationStr} s`;
 
         const logEntry = durationSec < 20 ? `⚠️ ${bucketLog}` : bucketLog;
 

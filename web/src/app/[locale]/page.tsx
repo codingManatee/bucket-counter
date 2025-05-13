@@ -59,7 +59,7 @@ const Page = () => {
   const fetchCount = useCallback(async () => {
     const nowUtc = new Date();
 
-    const isDayShift = getShift(nowUtc, timezone) === 1;
+    const isDayShift = getShift(nowUtc) === 1;
 
     try {
       const events: FrigateEventMessage[] = isDayShift
