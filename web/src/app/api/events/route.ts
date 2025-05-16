@@ -1,4 +1,4 @@
-import { eventService } from "@/services/events/events";
+import { eventService } from "@/services/events/service";
 import { FrigateEvent } from "@/types/frigateEvent";
 
 import { NextRequest, NextResponse } from "next/server";

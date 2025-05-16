@@ -3,7 +3,7 @@
 import {
   getDayShiftEvents,
   getNightShiftEvents,
-} from "@/services/events/eventsApi";
+} from "@/services/events/serviceApi";
 import { useTimeZone } from "@/stores/useMqttStore";
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "../../../../components/ui/card";

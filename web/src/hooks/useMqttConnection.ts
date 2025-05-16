@@ -11,14 +11,20 @@ import {
   createEvent,
   getDayShiftEvents,
   getNightShiftEvents,
-} from "@/services/events/eventsApi";
+} from "@/services/events/serviceApi";
 import { getMqttUri } from "@/lib/getMqttUri";
 import { FrigateEventMessage } from "@prisma/client";
 import { setHours, isBefore, format, isAfter, startOfDay } from "date-fns";
 import { FrigateEvent } from "@/types/frigateEvent";
+import { CreateLogDto } from "@/services/logs/domain";
+import { createLog } from "@/services/logs/serviceApi";
 
-export const useMqttConnection = (topic: string, explicitUri?: string) => {
-  const { addLog, setConnectionStatus } = useMqttActions();
+export const useMqttConnection = (
+  topic: string,
+  fetchCount: () => void,
+  explicitUri?: string
+) => {
+  const { setConnectionStatus } = useMqttActions();
   const connectionStatus = useConnectionStatus();
   const mqttUri = explicitUri ?? getMqttUri();
 
@@ -74,7 +80,10 @@ export const useMqttConnection = (topic: string, explicitUri?: string) => {
         const bucketNumber = events.length;
 
         if (bucketNumber === 1) {
-          addLog(`[${dateLabel}] Shift ${shiftNumber} started`);
+          const dto: CreateLogDto = {
+            message: `[${dateLabel}] Shift ${shiftNumber} started`,
+          };
+          await createLog(dto);
         }
 
         // 7) compute duration
@@ -91,7 +100,14 @@ export const useMqttConnection = (topic: string, explicitUri?: string) => {
 
         const logEntry = durationSec < 20 ? `⚠️ ${bucketLog}` : bucketLog;
 
-        addLog(logEntry);
+        const dto: CreateLogDto = {
+          message: logEntry,
+          totalTime: durationSec,
+        };
+
+        await createLog(dto);
+
+        fetchCount();
       } catch (err) {
         console.error("Failed to handle end-event", err);
       }

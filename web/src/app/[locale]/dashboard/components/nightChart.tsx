@@ -18,7 +18,7 @@ import {
 } from "../../../../components/ui/card";
 import { useState, useEffect } from "react";
 import { useTimeZone } from "@/stores/useMqttStore";
-import { getNightShiftEventsGrouped } from "@/services/events/eventsApi";
+import { getNightShiftEventsGrouped } from "@/services/events/serviceApi";
 import { transformGroupedEventsToChartData } from "@/lib/helper";
 import { ChartData } from "@/types/chart";
 import { useTranslations } from "next-intl";

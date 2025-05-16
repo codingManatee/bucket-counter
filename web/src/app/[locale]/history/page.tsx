@@ -26,7 +26,7 @@ import {
   getDayShiftEvents,
   getNightShiftEvents,
   getIdleTime,
-} from "@/services/events/eventsApi";
+} from "@/services/events/serviceApi";
 import { useTimeZone } from "@/stores/useMqttStore";
 import { Skeleton } from "@/components/ui/skeleton";
 

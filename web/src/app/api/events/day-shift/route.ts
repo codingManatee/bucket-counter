@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { eventService } from "@/services/events/events";
+import { eventService } from "@/services/events/service";
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {

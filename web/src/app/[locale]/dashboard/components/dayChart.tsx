@@ -17,7 +17,7 @@ import {
   CardTitle,
 } from "../../../../components/ui/card";
 import { useEffect, useState } from "react";
-import { getDayShiftEventsGrouped } from "@/services/events/eventsApi";
+import { getDayShiftEventsGrouped } from "@/services/events/serviceApi";
 import { useTimeZone } from "@/stores/useMqttStore";
 import { transformGroupedEventsToChartData } from "@/lib/helper";
 import { Skeleton } from "../../../../components/ui/skeleton";

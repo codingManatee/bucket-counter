@@ -10,9 +10,11 @@ import {
   getNightShiftEvents,
   getNightShiftEventsGrouped,
   getTodayShiftEvents,
-} from "@/services/events/eventsApi";
+} from "@/services/events/serviceApi";
 import { useTimeZone } from "@/stores/useMqttStore";
 import { generateRandomPayload } from "@/lib/helper";
+import { createLog, getAllLogs } from "@/services/logs/serviceApi";
+import { CreateLogDto } from "@/services/logs/domain";
 
 const Page = () => {
   const timezone = useTimeZone();
@@ -93,6 +95,29 @@ const Page = () => {
           }}
         >
           get idle time today
+        </Button>
+        <Button
+          className="px-4 py-2 "
+          variant="outline"
+          onClick={() => {
+            const sampleLog: CreateLogDto = {
+              message: "test",
+              totalTime: 25,
+            };
+            createLog(sampleLog);
+          }}
+        >
+          create sample log
+        </Button>
+
+        <Button
+          className="px-4 py-2 "
+          variant="outline"
+          onClick={() => {
+            getAllLogs();
+          }}
+        >
+          get all log
         </Button>
       </div>
     </div>

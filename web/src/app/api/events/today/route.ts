@@ -1,4 +1,4 @@
-import { eventService } from "@/services/events/events";
+import { eventService } from "@/services/events/service";
 import { FrigateEventMessage } from "@prisma/client";
 
 import { NextRequest, NextResponse } from "next/server";

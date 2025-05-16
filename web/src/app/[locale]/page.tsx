@@ -7,16 +7,16 @@ import {
   getDayShiftEvents,
   getNightShiftEvents,
   resetCurrentShift,
-} from "@/services/events/eventsApi";
+} from "@/services/events/serviceApi";
+import { createLog, getAllLogs, resetLog } from "@/services/logs/serviceApi";
 import {
   useConnectionStatus,
   useLoggingStatus,
-  useLogs,
   useMqttActions,
   useTimeZone,
 } from "@/stores/useMqttStore";
 import { ConnectionStatus, LoggingStatus } from "@/types/mqttStore";
-import { FrigateEventMessage } from "@prisma/client";
+import { FrigateEventMessage, LogMessage } from "@prisma/client";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 import {
   ChartNoAxesCombined,
@@ -46,15 +46,13 @@ const loggingStyles: Record<LoggingStatus, string> = {
 
 const Page = () => {
   const t = useTranslations("HomePage");
-  const logs = useLogs();
   const router = useRouter();
   const loggingStatus = useLoggingStatus();
   const connectionStatus = useConnectionStatus();
   const timezone = useTimeZone();
-  const { addLog, resetLog, setLoggingStatus } = useMqttActions();
+  const { setLoggingStatus } = useMqttActions();
   const [count, setCount] = useState(0);
-
-  useMqttConnection("frigate/reviews");
+  const [logs, setLogs] = useState<LogMessage[]>([]);
 
   const fetchCount = useCallback(async () => {
     const nowUtc = new Date();
@@ -66,19 +64,20 @@ const Page = () => {
         ? await getDayShiftEvents(timezone)
         : await getNightShiftEvents(timezone);
 
+      const log: LogMessage[] = await getAllLogs();
+
       setCount(events.length);
+      setLogs(log);
     } catch (err) {
       console.error("failed to load events:", err);
       setCount(0);
     }
   }, [timezone]);
 
-  useEffect(() => {
-    void fetchCount();
-  }, [logs, fetchCount]);
+  useMqttConnection("frigate/reviews", fetchCount);
 
   const handleReset = async () => {
-    addLog("Reset current shift to 0");
+    await createLog({ message: "Reset current shift to 0" });
     setCount(0);
     await resetCurrentShift(timezone);
     await fetchCount();
@@ -87,6 +86,15 @@ const Page = () => {
   const toggleLoggingStatus = () => {
     setLoggingStatus(loggingStatus === "logging" ? "hault" : "logging");
   };
+
+  const handleResetLog = async () => {
+    await resetLog();
+    fetchCount();
+  };
+
+  useEffect(() => {
+    fetchCount();
+  }, []);
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 max-h-full overflow-auto">
       <div className="md:col-span-3 overflow-y-auto ">
@@ -121,7 +129,7 @@ const Page = () => {
                   variant="outline"
                   size="sm"
                   onClick={() => {
-                    resetLog();
+                    handleResetLog();
                   }}
                 >
                   <RotateCcw size={14} />
@@ -138,13 +146,20 @@ const Page = () => {
               {loggingStatus === "hault" ? (
                 <div className="space-y-2">{t("loggingHaulted")}</div>
               ) : logs.length > 0 ? (
-                logs.map((log, idx) => (
-                  <div key={idx} className="pb-1">
-                    {log}
-                  </div>
-                ))
+                logs.map((log, idx) => {
+                  const timeStr = new Date(log.createdAt).toLocaleTimeString();
+                  const isFast = log.totalTime !== null && log.totalTime < 20;
+
+                  return (
+                    <div
+                      key={idx}
+                      className={`pb-1 ${isFast ? "text-red-500" : ""}`}
+                    >
+                      [{timeStr}] {log.message}
+                    </div>
+                  );
+                })
               ) : (
-                // empty-state message when "logging" but no entries yet
                 <div className="text-muted-foreground italic">
                   {t("noLogs")}
                 </div>

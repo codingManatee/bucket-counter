@@ -57,3 +57,10 @@ model Audio {
   event   FrigateEventMessage @relation(fields: [eventId], references: [id], onDelete: Cascade)
   eventId String
 }
+
+model LogMessage {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  message   String
+  totalTime Float?
+}

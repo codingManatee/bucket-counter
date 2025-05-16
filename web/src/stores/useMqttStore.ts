@@ -7,7 +7,6 @@ type Locale = "en" | "ru";
 
 interface MqttStore {
   connectionStatus: ConnectionStatus;
-  logs: string[];
   loggingStatus: LoggingStatus;
   timezone: number;
   selectedDay: Date;
@@ -15,10 +14,7 @@ interface MqttStore {
   locale: Locale;
   actions: {
     setConnectionStatus: (status: ConnectionStatus) => void;
-    addLog: (entry: string) => void;
     setLoggingStatus: (status: LoggingStatus) => void;
-    resetLog: () => void;
-
     setTimeZone: (timezone: number) => void;
     setSelectedShiftDisplay: (shift: ShiftDisplay) => void;
     setLocale: (locale: Locale) => void;
@@ -30,7 +26,6 @@ const useMqttStore = create<MqttStore>()(
     (set) => ({
       objectCount: 0,
       connectionStatus: "disconnected",
-      logs: [],
       loggingStatus: "hault",
       timezone: 0,
       selectedDay: new Date(),
@@ -45,19 +40,7 @@ const useMqttStore = create<MqttStore>()(
           set({ connectionStatus: connectionStatus }),
         setLoggingStatus: (loggingStatus: LoggingStatus) =>
           set({ loggingStatus: loggingStatus }),
-        addLog: (entry) => {
-          const timestamp = new Date().toLocaleTimeString();
-          set((state) => ({
-            logs: [`[${timestamp}] ${entry}`, ...state.logs],
-          }));
-        },
-        resetLog: () =>
-          set({
-            logs: [],
-          }),
-
         setTimeZone: (timezone) => set({ timezone: timezone }),
-
         setSelectedShiftDisplay: (shift) =>
           set({ selectedShiftDisplay: shift }),
         setLocale: (locale: Locale) => set({ locale }),
@@ -79,7 +62,6 @@ const useMqttStore = create<MqttStore>()(
 export const useMqttActions = () => useMqttStore((state) => state.actions);
 export const useConnectionStatus = () =>
   useMqttStore((state) => state.connectionStatus);
-export const useLogs = () => useMqttStore((state) => state.logs);
 export const useLoggingStatus = () =>
   useMqttStore((state) => state.loggingStatus);
 export const useTimeZone = () => useMqttStore((state) => state.timezone);

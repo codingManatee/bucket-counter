@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-import { EventService } from "@/interfaces";
+import { EventService } from "@/services/events/domain";
 
 import {
   startOfDay,

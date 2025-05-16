@@ -1,4 +1,4 @@
-import { eventService } from "@/services/events/events";
+import { eventService } from "@/services/events/service";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
