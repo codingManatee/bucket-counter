@@ -1,4 +1,1 @@
-
-/storage/*
-/config/*
-!/config/config.yaml
+*

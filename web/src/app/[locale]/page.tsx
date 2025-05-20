@@ -56,7 +56,6 @@ const Page = () => {
 
   const fetchCount = useCallback(async () => {
     const nowUtc = new Date();
-
     const isDayShift = getShift(nowUtc) === 1;
 
     try {
@@ -94,7 +93,8 @@ const Page = () => {
 
   useEffect(() => {
     fetchCount();
-  }, []);
+  }, [timezone]);
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 max-h-full overflow-auto">
       <div className="md:col-span-3 overflow-y-auto ">
